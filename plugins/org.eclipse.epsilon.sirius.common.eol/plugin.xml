@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.eclipse.epsilon.sirius.EolInterpreter"
+         point="org.eclipse.sirius.common.expressionInterpreter">
+      <expressionInterpreterProvider
+            interpreterProviderClass="org.eclipse.epsilon.sirius.common.ocl.business.internal.interpreter.EolInterpreter">
+      </expressionInterpreterProvider>
+   </extension>
+
+</plugin>
