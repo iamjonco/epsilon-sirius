@@ -1,0 +1,127 @@
+@cached
+operation ECore!EModelElement getAnnotation(name : String) : ECore!EAnnotation {
+	var ann := self.eAnnotations.selectOne(a|a.source = name);
+	
+	if (self.isTypeOf(ECore!EClass) and ann.isUndefined()) {
+		for (s in self.eSuperTypes) {
+			var sann := s.getAnnotation(name);
+			if (sann.isDefined()) return sann;
+		}
+	}
+	
+	return ann;
+	
+}
+
+@cached
+operation ECore!EModelElement getAnnotationValue(name : String, detail : String) : Any {
+	var ann := self.eAnnotations.selectOne(a|a.source = name);
+	var det;
+
+	if (ann.isDefined()) {
+		det := ann.details.selectOne(d|d.key = detail);
+	}
+
+	if (det.isDefined()) {
+		return det.value;
+	}
+	else if (self.isTypeOf(ECore!EClass)) {
+		for (s in self.eSuperTypes) {
+			var sann := s.getAnnotationValue(name, detail);
+			if (sann.isDefined()) {
+				return sann;
+			}
+		}
+	}
+	return det;	
+}
+
+@cached
+operation ECore!EAnnotation getDetail(key : String) : String {
+	var detail := self.details.selectOne(d|d.key = key);
+	if (detail.isDefined()) {return detail.value;}
+	else {return null;}
+}
+
+@cached
+operation ECore!EClass getDomainClassString() : String {
+	return self.ePackage.name + '::' + self.name;
+}
+
+@cached
+operation ECore!EModelElement isAnnotatedAs(name : String) : Boolean {
+	return self.getAnnotation(name).isDefined();
+}
+
+@cached
+operation ECore!EReference isLink() : Boolean {
+	return self.isAnnotatedAs('gmf.link');
+}
+
+@cached
+operation ECore!EClass isLink() : Boolean {
+	if (self.abstract) return false;
+	 
+	var isLink := self.isAnnotatedAs('gmf.link');
+	var isNoLink := self.isAnnotatedAs('gmf.nolink');
+	
+	if (isNoLink) return false;
+	else if (isLink) return true;
+	else return self.eSuperTypes.exists(s|s.isLink());
+	
+	return isLink;
+}
+
+@cached
+operation ECore!EClass isNode() : Boolean {
+	if (self.isLink()) return false;
+	if (self.abstract) return false;
+	
+	var isNode := self.isAnnotatedAs('gmf.node');
+	var isNoNode := self.isAnnotatedAs('gmf.nonode');
+	
+	if (isNoNode) return false;
+	else if (isNode) return true;
+	else return self.eSuperTypes.exists(s|s.isNode());
+	
+	return isNode;
+}
+
+
+// FIXME: Why can return type not be ODesign!diagram::LineStyle
+@cached
+operation ECore!EClass getBorderStyle() : Any {
+	switch (self.getAnnotationValue(self.annoType(), 'border.style')) {
+		case 'dot': return ODesign!diagram::LineStyle#dot;
+		case 'dash': return ODesign!diagram::LineStyle#dash;
+		case 'dash_dot': return ODesign!diagram::LineStyle#dash_dot;
+		default: return ODesign!diagram::LineStyle#solid;
+	}
+}
+
+@cached
+operation ECore!EClass getLabelExpression() : Any {
+	var label :String;
+	
+	label := self.getAnnotationValue(self.annoType(), 'label');
+	if (label.isDefined()) return label;
+	
+	label := self.getAnnotationValue(self.annoType(), 'label.eol');
+	if (label.isDefined()) return 'eol:' + label;
+	
+	return 'feature:name';
+}
+
+@cached
+operation ECore!EClass getLabelPlacement() : Any {
+	var labelPlacement := self.getAnnotationValue(self.annoType(), 'label.placement');
+	if (labelPlacement = "bordered" or labelPlacement = "external")
+		return ODesign!diagram::LabelPosition#border;
+	return ODesign!diagram::LabelPosition#node;
+}
+
+@cached
+operation ECore!EClass annoType() : String {
+	if (self.isNode()) return 'gmf.node';
+	return 'gmf.link';
+}

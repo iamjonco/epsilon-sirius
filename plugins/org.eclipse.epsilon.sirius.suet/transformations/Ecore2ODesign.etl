@@ -1,0 +1,141 @@
+import 'EcoreUtil.eol';
+
+pre {
+	var ePackage = ECore!EPackage.all.first();
+	
+	// TODO: Handle multiple groups
+	var topGroup : new ODesign!viewpoint::description::Group;
+	topGroup.name := 'Default';
+	
+	var userColorsPalette := new ODesign!viewpoint::description::UserColorsPalette;
+	userColorsPalette.name := 'Default';
+	getColor("DEFAULT", 211, 211, 211);
+	getColor("BLACK", 0, 0, 0);
+	topGroup.userColorsPalettes.add(userColorsPalette);
+	
+	// TODO: Handle multiple viewpoints
+	var defaultVp : new ODesign!viewpoint::description::Viewpoint;
+	defaultVp.name := ePackage.name;
+	
+	// TODO: support multiple modelFileExtensions
+	defaultVp.modelFileExtension := 
+		ePackage.getAnnotationValue('gmf.diagram','model.extension')
+		.ifUndefined('*');
+	topGroup.ownedViewpoints.add(defaultVp);
+}
+
+rule Diagram
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::DiagramDescription {
+	guard: s.isAnnotatedAs('gmf.diagram')
+	
+	var ann := s.getAnnotation('gmf.diagram');
+
+	t.name := ann.getDetail('label').ifUndefined('Default');
+	t.domainClass = s.getDomainClassString();
+	// TODO: Handle multiple metamodel imports
+	// FIXME: Href link that is generated sucks
+	t.metamodel.add(ePackage);
+	
+	// TODO: Handle multiple layers
+	t.defaultLayer := new ODesign!diagram::description::Layer;
+	t.defaultLayer.name := 'Default';
+	
+	defaultVp.ownedRepresentations.add(t);
+}
+
+rule Node 
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::NodeMapping {
+	guard: s.isNode()
+
+	t.name := s.name;
+	t.domainClass := s.getDomainClassString();
+	
+	// Shape
+	// TODO: Size - handle interpreted expressions...
+	var style : ODesign!diagram::description::style::NodeStyleDescription;
+	switch(s.getAnnotationValue('gmf.node', 'figure')) {
+		// TODO: Dot???, Basic Shape, Workspace Icon, Custom Java
+		case "square":
+			style := new ODesign!diagram::description::style::SquareDescription;
+		case "diamond":
+			style := new ODesign!diagram::description::style::LozengeNodeDescription;
+		default:
+			style := new ODesign!diagram::description::style::EllipseNodeDescription;
+	}
+	style.color := s.getColor();
+	
+	// Shape Borders
+	// TODO: Size
+	style.borderLineStyle := s.getBorderStyle();
+	style.borderColor := s.getBorderColor();
+	
+	var resizeable := s.getAnnotationValue(s.annoType(), 'resizeable').ifUndefined(true);
+	if (resizeable.asBoolean()) style.resizeKind := ODesign!diagram::ResizeKind#NSEW;
+	else style.resizeKind := ODesign!diagram::ResizeKind#NONE;
+	
+	// Labelling
+	style.labelExpression := s.getLabelExpression(); // FIXME: Not sure this works correctly
+	style.labelPosition := s.getLabelPlacement();
+	style.labelColor := s.getLabelColor();
+	// TODO: style.hideLabelByDefault 
+	
+	// TODO: Handle multi diagrams
+	t.style := style;
+	defaultVp.ownedRepresentations.first().defaultLayer.nodeMappings.add(t);
+}
+
+@cached
+operation ECore!EClass getColor(detail : String, defaultValue : ODesign!viewpoint::description::ColorDescription) : ODesign!viewpoint::description::UserFixedColor {
+	var ann : String;
+	if (self.isNode()) ann := 'gmf.node';
+	else ann := 'gmf.link';
+	
+	var detail := self.getAnnotationValue(ann, detail);
+	if (detail.isDefined()) {
+		var rgb := self.split(',');
+		if (rgb.forAll(i|i.isInteger())) {
+			return getColor(
+				self.getEModelElement(), 
+				rgb[0].asInteger(), 
+				rgb[1].asInteger(), 
+				rgb[2].asInteger());
+		}
+	}
+	return defaultValue;
+}
+
+@cached
+operation ECore!EClass getColor(detail : String) : ODesign!viewpoint::description::UserFixedColor {
+	return self.getColor(detail, userColorsPalette.entries.selectOne(c|c.name = 'DEFAULT'));
+}
+
+@cached
+operation ECore!EClass getColor() : ODesign!viewpoint::description::ColorDescription {
+	return self.getColor('color');
+}
+
+@cached
+operation ECore!EClass getBorderColor() : ODesign!viewpoint::description::UserFixedColor {
+	return self.getColor('border.color', userColorsPalette.entries.selectOne(c|c.name = 'BLACK'));
+}
+
+@cached
+operation ECore!EClass getLabelColor() : ODesign!viewpoint::description::UserFixedColor {
+	return self.getColor('label.color', userColorsPalette.entries.selectOne(c|c.name = 'BLACK'));
+}
+
+@cached
+operation getColor(name : String, r : Integer, g : Integer, b : Integer) : ODesign!viewpoint::description::UserFixedColor {
+	var color := userColorsPalette.entries.selectOne(c|c.name = name);
+	if (color.isDefined()) return color;
+	
+	color := new ODesign!viewpoint::description::UserFixedColor;
+	color.name := name;
+	color.red := r;
+	color.green := g;
+	color.blue := b;
+	userColorsPalette.entries.add(color);
+	return color;
+}
