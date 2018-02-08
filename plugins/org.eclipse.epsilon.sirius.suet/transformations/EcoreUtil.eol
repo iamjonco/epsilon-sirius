@@ -87,18 +87,6 @@ operation ECore!EClass isNode() : Boolean {
 	return isNode;
 }
 
-
-// FIXME: Why can return type not be ODesign!diagram::LineStyle
-@cached
-operation ECore!EClass getBorderStyle() : Any {
-	switch (self.getAnnotationValue(self.annoType(), 'border.style')) {
-		case 'dot': return ODesign!diagram::LineStyle#dot;
-		case 'dash': return ODesign!diagram::LineStyle#dash;
-		case 'dash_dot': return ODesign!diagram::LineStyle#dash_dot;
-		default: return ODesign!diagram::LineStyle#solid;
-	}
-}
-
 @cached
 operation ECore!EClass getLabelExpression() : Any {
 	var label :String;
