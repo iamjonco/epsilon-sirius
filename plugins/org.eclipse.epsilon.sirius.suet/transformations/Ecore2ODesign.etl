@@ -51,15 +51,9 @@ rule Node
 	t.name := s.name;
 	t.domainClass := s.getDomainClassString();
 	t.style := newNodeStyle(ann.getDetail('shape'));
+	t.style.color := ann.getColor();
 	
-	var styleColor := ann.getDetail('color');
-	if (styleColor.isDefined()) t.style.color := topGroup.getColor(s.name + '_COLOR', styleColor);
-	else t.style.color := defaultColor;
-	
-	var borderColor := ann.getDetail('border.color');
-	if (borderColor.isDefined()) t.style.borderColor := topGroup.getColor(s.name + '_BORDER_COLOR', borderColor);
-	else t.style.borderColor := defaultBorderColor;
-
+	t.style.borderColor := ann.getBorderColor();
 	var borderLineStyle := ann.getDetail('border.style');
 	if (borderLineStyle.isDefined()) t.style.borderLineStyle := getBorderStyle(borderLineStyle);
 	else t.style.borderLineStyle := getBorderStyle();
@@ -71,12 +65,28 @@ rule Node
 	// Labelling
 	t.style.labelExpression := s.getLabelExpression(); // FIXME: Not sure this works correctly
 	t.style.labelPosition := s.getLabelPlacement();
-	
-	var labelColor := ann.getDetail('label.color');
-	if (labelColor.isDefined()) t.style.labelColor := topGroup.getColor(s.name + "_LABEL_COLOR", labelColor);
-	else t.style.labelColor := defaultLabelColor;
+	t.style.labelColor := ann.getLabelColor();
 	// TODO: style.hideLabelByDefault 
 
 	// TODO: Handle multi diagrams
 	topViewpoint.ownedRepresentations.first().defaultLayer.nodeMappings.add(t);
 }
+
+operation ECore!EAnnotation getBorderColor() : ODesign!viewpoint::description::UserFixedColor {
+	var rgb : String := self.getDetail('border.color');
+	if (rgb.isUndefined()) return defaultBorderColor;
+	return topGroup.getColor(self.getEModelElement().name + '_BORDER_COLOR', rgb);
+}
+
+operation ECore!EAnnotation getLabelColor() : ODesign!viewpoint::description::UserFixedColor {
+	var rgb : String := self.getDetail('label.color');
+	if (rgb.isUndefined()) return defaultLabelColor;
+	return topGroup.getColor(self.getEModelElement().name + '_LABEL_COLOR', rgb);
+}
+
+operation ECore!EAnnotation getColor() : ODesign!viewpoint::description::UserFixedColor {
+	var rgb : String := self.getDetail('color');
+	if (rgb.isUndefined()) return defaultColor;
+	return topGroup.getColor(self.getEModelElement().name + '_COLOR', rgb);
+}
+

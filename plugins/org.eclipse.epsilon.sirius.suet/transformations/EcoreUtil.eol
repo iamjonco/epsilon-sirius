@@ -89,12 +89,14 @@ operation ECore!EClass isNode() : Boolean {
 
 @cached
 operation ECore!EClass getLabelExpression() : Any {
-	var label :String;
-	
-	label := self.getAnnotationValue(self.annoType(), 'label');
+	var ann : String;
+	if (self.isNode()) ann := 'gmf.node';
+	else ann := 'gmf.link';
+
+	var label := self.getAnnotationValue(ann, 'label');
 	if (label.isDefined()) return label;
 	
-	label := self.getAnnotationValue(self.annoType(), 'label.eol');
+	label := self.getAnnotationValue(ann, 'label.eol');
 	if (label.isDefined()) return 'eol:' + label;
 	
 	return 'feature:name';
@@ -102,14 +104,12 @@ operation ECore!EClass getLabelExpression() : Any {
 
 @cached
 operation ECore!EClass getLabelPlacement() : Any {
-	var labelPlacement := self.getAnnotationValue(self.annoType(), 'label.placement');
+	var ann : String;
+	if (self.isNode()) ann := 'gmf.node';
+	else ann := 'gmf.link';
+
+	var labelPlacement := self.getAnnotationValue(ann, 'label.placement');
 	if (labelPlacement = "bordered" or labelPlacement = "external")
 		return ODesign!diagram::LabelPosition#border;
 	return ODesign!diagram::LabelPosition#node;
-}
-
-@cached
-operation ECore!EClass annoType() : String {
-	if (self.isNode()) return 'gmf.node';
-	return 'gmf.link';
 }
