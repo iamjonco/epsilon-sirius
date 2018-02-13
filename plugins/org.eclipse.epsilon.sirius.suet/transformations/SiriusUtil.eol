@@ -1,8 +1,6 @@
 /**
  * GENERAL STRUCTURAL ELEMENTS ------------------------------------------------
  */
-
-@cached
 operation ODesign!diagram::description::Layer getToolSection(name : String) 
 		: ODesign!diagram::description::tool::ToolSection {
 	var toolSection := self.toolSections.selectOne(e|e.name = name);
@@ -23,7 +21,6 @@ operation ODesign!diagram::description::Layer getToolSection()
 /**
  * COLORS ---------------------------------------------------------------------
  */
-@cached
 operation ODesign!viewpoint::description::Group getColorPalette(name : String) 
 			: ODesign!viewpoint::description::UserColorsPalette {
 	var palette := self.userColorsPalettes.selectOne(e|e.name = name);
@@ -41,7 +38,6 @@ operation ODesign!viewpoint::description::Group getColorPalette()
 	return self.getColorPalette('Default');
 }
 
-@cached
 operation ODesign!viewpoint::description::UserColorsPalette 
 			getColor(name : String, r : Integer, g : Integer, b : Integer) 
 			: ODesign!viewpoint::description::UserFixedColor {
@@ -57,7 +53,6 @@ operation ODesign!viewpoint::description::UserColorsPalette
 	return color;
 }
 
-@cached
 operation ODesign!viewpoint::description::UserColorsPalette 
 			getColor(name : String, rgb : String) 
 			: ODesign!viewpoint::description::UserFixedColor {		
@@ -71,20 +66,17 @@ operation ODesign!viewpoint::description::UserColorsPalette getColor(name : Stri
 	return self.entries.selectOne(c|c.name = name);
 }
 
-@cached
 operation ODesign!viewpoint::description::Group
 			getColor(name : String, r : Integer, g : Integer, b : Integer)
 			: ODesign!viewpoint::description::UserFixedColor {
 	return self.getColorPalette().getColor(name, r, g, b);
 }
 
-@cached
 operation ODesign!viewpoint::description::Group getColor(name : String, rgb : String) 
 			: ODesign!viewpoint::description::UserFixedColor {
 	return self.getColorPalette().getColor(name, rgb);
 }
 
-@cached
 operation ODesign!viewpoint::description::Group getColor(name : String) 
 			: ODesign!viewpoint::description::UserFixedColor {
 	return self.getColorPalette().getColor(name);
@@ -96,7 +88,6 @@ operation getBorderStyle() : Any {
 	return ODesign!diagram::LineStyle#solid;
 }
 
-@cached
 operation getBorderStyle(line : String) : Any {
 	switch (line) {
 		case 'dot': return ODesign!diagram::LineStyle#dot;
@@ -110,7 +101,6 @@ operation getBorderStyle(line : String) : Any {
  * NODES ----------------------------------------------------------------------
  */
  // TODO: Account for all the other shapes
- @cached
  operation newNodeStyle(shape : String) : ODesign!diagram::description::style::NodeStyleDescription {
  	switch(shape) {
 		case "square": return new ODesign!diagram::description::style::SquareDescription;
