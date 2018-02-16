@@ -98,12 +98,23 @@ operation getBorderStyle(line : String) : Any {
  * NODES ----------------------------------------------------------------------
  */
  // TODO: Account for all the other shapes
- operation newNodeStyle(shape : String) : ODesign!diagram::description::style::NodeStyleDescription {
- 	switch(shape) {
-		case "square": return new ODesign!diagram::description::style::SquareDescription;
-		case "diamond":  return new ODesign!diagram::description::style::LozengeNodeDescription;
-		default: return new ODesign!diagram::description::style::EllipseNodeDescription;
+operation newNodeStyle(shape : String) : ODesign!diagram::description::style::NodeStyleDescription {
+	var style : ODesign!NodeStyleDescription;
+	if (shape = "square") {
+		style := new ODesign!diagram::description::style::SquareDescription;
 	}
+	else if (shape = "diamond") {
+		style := new ODesign!diagram::description::style::LozengeNodeDescription;
+		style.heightComputationExpression := "[view.name.size()+5/]";
+		style.widthDiameterComputationExpression := "[view.name.size()+5/]";
+	}
+	else {
+		style := new ODesign!diagram::description::style::EllipseNodeDescription;
+		style.horizontalDiameterComputationExpression := "[view.name.size()+3/]";
+		style.verticalDiameterComputationExpression := "4";
+	}
+	 	
+ 	return style;
  }
 
 /**
