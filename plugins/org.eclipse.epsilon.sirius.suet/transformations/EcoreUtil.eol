@@ -90,12 +90,12 @@ operation ECore!EClass getLabelExpression() : Any {
 	else ann := 'gmf.link';
 
 	var label := self.getAnnotationValue(ann, 'label');
-	if (label.isDefined()) return label;
+	if (label.isDefined()) return "feature:" + label;
 	
 	label := self.getAnnotationValue(ann, 'label.eol');
 	if (label.isDefined()) return 'eol:' + label;
 	
-	return 'feature:name';
+	return 'feature:name'; // FIXME: Original EOL required a lebel detail
 }
 
 @cached
