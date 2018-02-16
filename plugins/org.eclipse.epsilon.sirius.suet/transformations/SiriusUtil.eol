@@ -59,8 +59,6 @@ operation ODesign!viewpoint::description::UserColorsPalette
 	var c := rgb.split(',');
 	return self.getColor(name, c[0].asInteger(), c[1].asInteger(), c[2].asInteger());
 }
-
-@cached
 operation ODesign!viewpoint::description::UserColorsPalette getColor(name : String) 
 			: ODesign!viewpoint::description::UserFixedColor {
 	return self.entries.selectOne(c|c.name = name);
@@ -82,7 +80,6 @@ operation ODesign!viewpoint::description::Group getColor(name : String)
 	return self.getColorPalette().getColor(name);
 }
 
-// FIXME: Why can return type not be ODesign!diagram::LineStyle
 @cached
 operation getBorderStyle() : Any {
 	return ODesign!diagram::LineStyle#solid;
