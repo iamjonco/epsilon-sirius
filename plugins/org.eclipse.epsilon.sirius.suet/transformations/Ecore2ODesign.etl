@@ -48,8 +48,11 @@ rule Node
 	
 	var ann := s.getAnnotation('gmf.node');
 	
-	t.name := s.name;
+	t.name := s.name; // Diagram Description ID/Label - not shown to end user
 	t.domainClass := s.getDomainClassString();
+	t.semanticCandidatesExpression := "eol:" + s.name +".allOfType";
+	t.preconditionExpression := "eol:self.type().name = '" + s.name + "'";	
+	
 	t.style := newNodeStyle(ann.getDetail('shape'));
 	t.style.color := ann.getColor();
 	
