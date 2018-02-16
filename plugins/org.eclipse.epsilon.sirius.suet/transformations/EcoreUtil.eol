@@ -109,3 +109,9 @@ operation ECore!EClass getLabelPlacement() : Any {
 		return ODesign!diagram::LabelPosition#border;
 	return ODesign!diagram::LabelPosition#node;
 }
+
+@cached
+operation getDiagramClass() : ECore!EClass {
+	return ECore!EClass.all.selectOne(c|c.isAnnotatedAs('gmf.diagram'));
+}
+

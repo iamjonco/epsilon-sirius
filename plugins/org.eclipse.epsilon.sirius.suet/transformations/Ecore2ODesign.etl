@@ -1,25 +1,46 @@
 import 'EcoreUtil.eol';
 import 'SiriusUtil.eol';
 
-pre {
-	var ePackage = ECore!EPackage.all.first();
+pre {	
+	// Setup inital structures
+	var diagramClass := getDiagramClass();
+	var diagramAnn := diagramClass.getAnnotation('gmf.diagram');
 	
 	// TODO: Handle multiple Groups
 	var topGroup : new ODesign!viewpoint::description::Group;
-	topGroup.name := ePackage.name;
+	topGroup.name := getDiagramClass().name;
 	
 	// TODO: Handle multiple Viewpoints
 	var topViewpoint : new ODesign!viewpoint::description::Viewpoint;
-	topViewpoint.name := ePackage.name;
+	topViewpoint.name := getDiagramClass().name;
 	topViewpoint.modelFileExtension := 
-		ePackage.getAnnotationValue('gmf.diagram','model.extension').ifUndefined('*');
+		diagramAnn.getAnnotationValue('gmf.diagram','model.extension').ifUndefined('*');
 	topGroup.ownedViewpoints.add(topViewpoint);
 	
-	// Setup default colors
-	var defaultColor := topGroup.getColor('DEFAULT_COLOR', 211, 211, 211);
-	var defaultLineColor := topGroup.getColor('DEFAULT_LINE', 0, 0, 0);
-	var defaultBorderColor := topGroup.getColor('DEFAULT_BORDER', 0, 0, 0);
-	var defaultLabelColor := topGroup.getColor('DEFAULT_LABEL', 0, 0, 0);
+	// Setup Default Colors
+	var DEFAULT_PALETTE : ODesign!viewpoint::description::UserColorsPalette := 
+		new ODesign!UserColorsPalette;
+		
+	topGroup.userColorsPalettes.add(DEFAULT_PALETTE);
+	
+	var DEFAULT_COLOR : ODesign!viewpoint::description::UserFixedColor :=
+		newColor('DEFAULT_COLOR', 211, 211, 211);
+	var DEFAULT_LINE_COLOR : ODesign!viewpoint::description::UserFixedColor :=
+		newColor('DEFAULT_LINE', 0, 0, 0);
+	var DEFAULT_BORDER_COLOR : ODesign!viewpoint::description::UserFixedColor :=
+		newColor('DEFAULT_BORDER', 0, 0, 0);
+	var DEFAULT_LABEL_COLOR : ODesign!viewpoint::description::UserFixedColor :=
+		newColor('DEFAULT_LABEL', 0, 0, 0);
+
+	DEFAULT_PALETTE.entries.add(DEFAULT_COLOR);
+	DEFAULT_PALETTE.entries.add(DEFAULT_LINE_COLOR);
+	DEFAULT_PALETTE.entries.add(DEFAULT_BORDER_COLOR);
+	DEFAULT_PALETTE.entries.add(DEFAULT_LABEL_COLOR);
+	
+	// Setup a Default Tool Section
+	var DEFAULT_TOOL : ODesign!diagram::description::tool::ToolSection :=
+		new ODesign!ToolSection;
+	DEFAULT_TOOL.name := 'Default';
 }
 
 // TODO: Handle multiple metamodel imports
@@ -35,9 +56,13 @@ rule Diagram
 
 	t.name := s.getAnnotationValue('gmf.diagram', 'label').ifUndefined('Diagram');
 	t.domainClass = s.getDomainClassString();
-	t.metamodel.add(ePackage);
-	t.getLayer().getToolSection(); // Sets up layers and tool sections
+	t.metamodel.add(s.ePackage);
 	
+	// Setup Layers
+	// TODO: handle additional layering
+	t.defaultLayer := new ODesign!Layer;
+	t.defaultLayer.name := 'Default';
+
 	topViewpoint.ownedRepresentations.add(t);
 }
 
@@ -48,48 +73,78 @@ rule Node
 	
 	var ann := s.getAnnotation('gmf.node');
 	
+	// TODO: Handle multi diagrams
+	topViewpoint.ownedRepresentations.first().defaultLayer.nodeMappings.add(t);
+	
+	// Setup creation constraints
 	t.name := s.name; // Diagram Description ID/Label - not shown to end user
 	t.domainClass := s.getDomainClassString();
 	t.semanticCandidatesExpression := "eol:" + s.name +".allOfType";
 	t.preconditionExpression := "eol:self.type().name = '" + s.name + "'";	
 	
-	t.style := newNodeStyle(ann.getDetail('shape'));
-	t.style.color := ann.getColor();
+	// Style - initial setup
+	// TODO: Account for all the other shapes/icons
+	var style : ODesign!NodeStyleDescription;
+	var shape := ann.getDetail('shape');
+	if (shape = "square") {
+		style := new ODesign!SquareDescription;
+	}
+	else if (shape = "diamond") {
+		style := new ODesign!LozengeNodeDescription;
+		style.heightComputationExpression := "[view.name.size()+5/]";
+		style.widthDiameterComputationExpression := "[view.name.size()+5/]";
+	}
+	else {
+		style := new ODesign!EllipseNodeDescription;
+		style.horizontalDiameterComputationExpression := "[view.name.size()+3/]";
+		style.verticalDiameterComputationExpression := "4";
+	}
 	
-	t.style.borderColor := ann.getBorderColor();
-	var borderLineStyle := ann.getDetail('border.style');
-	if (borderLineStyle.isDefined()) t.style.borderLineStyle := getBorderStyle(borderLineStyle);
-	else t.style.borderLineStyle := getBorderStyle();
-
+	t.style := style;
+	
+	var colorDet := ann.getDetail('color');
+	if (colorDet.isDefined()) {
+		t.style.color := newColor(s.name + '_COLOR', colorDet);
+	} else {
+		t.style.color := DEFAULT_COLOR;
+	}
+	
 	var resizeable := ann.getDetail('resizeable').ifUndefined(true);
-	if (resizeable.asBoolean()) t.style.resizeKind := ODesign!diagram::ResizeKind#NSEW;
-	else t.style.resizeKind := ODesign!diagram::ResizeKind#NONE;
+	if (resizeable.asBoolean()) {
+		t.style.resizeKind := ODesign!diagram::ResizeKind#NSEW;
+	} else {
+		t.style.resizeKind := ODesign!diagram::ResizeKind#NONE;
+	}
 	
-	// Labelling
+	// Style - Borders
+	var borderColorDet := ann.getDetail('border.color');
+	if (borderColorDet.isDefined()) {
+		t.style.borderColor := newColor(s.name + '_BORDER', borderColorDet);
+	} else {
+		t.style.borderColor := DEFAULT_BORDER_COLOR;
+	}
+	
+	var borderStyleDet := ann.getDetail('border.style');
+	var borderStyle : Any;
+	switch (borderStyleDet) {
+		case 'dot': return ODesign!diagram::LineStyle#dot;
+		case 'dash': return ODesign!diagram::LineStyle#dash;
+		case 'dash_dot': return ODesign!diagram::LineStyle#dash_dot;
+		default: return ODesign!diagram::LineStyle#solid;
+	}
+	t.style.borderLineStyle := borderStyle;
+
+	// Style - Labelling
+	// TODO: style.hideLabelByDefault 
 	t.style.labelExpression := s.getLabelExpression(); // FIXME: Not sure this works correctly
 	t.style.labelPosition := s.getLabelPlacement();
-	t.style.labelColor := ann.getLabelColor();
-	// TODO: style.hideLabelByDefault 
-
-	// TODO: Handle multi diagrams
-	topViewpoint.ownedRepresentations.first().defaultLayer.nodeMappings.add(t);
+	
+	var labelColorDet := ann.getDetail('label.color');
+	if (labelColorDet.isDefined()) {
+		t.style.labelColor := newColor(s.name + '_LABEL', labelColorDet);
+	} else {
+		t.style.labelColor := DEFAULT_LABEL_COLOR;
+	}
 }
 
-operation ECore!EAnnotation getBorderColor() : ODesign!viewpoint::description::UserFixedColor {
-	var rgb : String := self.getDetail('border.color');
-	if (rgb.isUndefined()) return defaultBorderColor;
-	return topGroup.getColor(self.getEModelElement().name + '_BORDER_COLOR', rgb);
-}
-
-operation ECore!EAnnotation getLabelColor() : ODesign!viewpoint::description::UserFixedColor {
-	var rgb : String := self.getDetail('label.color');
-	if (rgb.isUndefined()) return defaultLabelColor;
-	return topGroup.getColor(self.getEModelElement().name + '_LABEL_COLOR', rgb);
-}
-
-operation ECore!EAnnotation getColor() : ODesign!viewpoint::description::UserFixedColor {
-	var rgb : String := self.getDetail('color');
-	if (rgb.isUndefined()) return defaultColor;
-	return topGroup.getColor(self.getEModelElement().name + '_COLOR', rgb);
-}
 

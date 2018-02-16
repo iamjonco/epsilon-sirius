@@ -1,5 +1,5 @@
 /**
- * GENERAL STRUCTURAL ELEMENTS ------------------------------------------------
+ * TOOLS ----------------------------------------------------------------------
  */
 operation ODesign!diagram::description::Layer getToolSection(name : String) 
 		: ODesign!diagram::description::tool::ToolSection {
@@ -21,172 +21,22 @@ operation ODesign!diagram::description::Layer getToolSection()
 /**
  * COLORS ---------------------------------------------------------------------
  */
-operation ODesign!viewpoint::description::Group getColorPalette(name : String) 
-			: ODesign!viewpoint::description::UserColorsPalette {
-	var palette := self.userColorsPalettes.selectOne(e|e.name = name);
-	if (palette.isUndefined()) {
-		palette := new ODesign!viewpoint::description::UserColorsPalette;
-		palette.name := name;
-		self.userColorsPalettes.add(palette);
-	}
-	return palette;
-}
-
-@cached
-operation ODesign!viewpoint::description::Group getColorPalette() 
-			: ODesign!viewpoint::description::UserColorsPalette {
-	return self.getColorPalette('Default');
-}
-
-operation ODesign!viewpoint::description::UserColorsPalette 
-			getColor(name : String, r : Integer, g : Integer, b : Integer) 
-			: ODesign!viewpoint::description::UserFixedColor {
-	var color := self.getColor(name);
-	if (color.isUndefined()) {
-		color := new ODesign!viewpoint::description::UserFixedColor;
-		color.name := name;
-		color.red := r;
-		color.green := g;
-		color.blue := b;
-		self.entries.add(color);
-	}
+operation newColor(name : String, red : Integer, green : Integer, blue : Integer) 
+		: ODesign!viewpoint::description::UserFixedColor {
+	var color := new ODesign!UserFixedColor;
+	color.name := name;
+	color.red := red;
+	color.green := green;
+	color.blue := blue;
 	return color;
 }
 
-operation ODesign!viewpoint::description::UserColorsPalette 
-			getColor(name : String, rgb : String) 
-			: ODesign!viewpoint::description::UserFixedColor {		
-	var c := rgb.split(',');
-	return self.getColor(name, c[0].asInteger(), c[1].asInteger(), c[2].asInteger());
+operation newColor(name : String, rgb : String)
+		: ODesign!viewpoint::description::UserFixedColor {
+	return newColor(name, c.characterAt(0), c.characterAt(1), c.characterAt(2));
 }
-operation ODesign!viewpoint::description::UserColorsPalette getColor(name : String) 
-			: ODesign!viewpoint::description::UserFixedColor {
+
+operation ODesign!viewpoint::description::UserColorsPalette getColor(name : String)
+		: ODesign!viewpoint::description::UserFixedColor {
 	return self.entries.selectOne(c|c.name = name);
-}
-
-operation ODesign!viewpoint::description::Group
-			getColor(name : String, r : Integer, g : Integer, b : Integer)
-			: ODesign!viewpoint::description::UserFixedColor {
-	return self.getColorPalette().getColor(name, r, g, b);
-}
-
-operation ODesign!viewpoint::description::Group getColor(name : String, rgb : String) 
-			: ODesign!viewpoint::description::UserFixedColor {
-	return self.getColorPalette().getColor(name, rgb);
-}
-
-operation ODesign!viewpoint::description::Group getColor(name : String) 
-			: ODesign!viewpoint::description::UserFixedColor {
-	return self.getColorPalette().getColor(name);
-}
-
-@cached
-operation getBorderStyle() : Any {
-	return ODesign!diagram::LineStyle#solid;
-}
-
-operation getBorderStyle(line : String) : Any {
-	switch (line) {
-		case 'dot': return ODesign!diagram::LineStyle#dot;
-		case 'dash': return ODesign!diagram::LineStyle#dash;
-		case 'dash_dot': return ODesign!diagram::LineStyle#dash_dot;
-		default: return ODesign!diagram::LineStyle#solid;
-	}
-}
-
-/**
- * NODES ----------------------------------------------------------------------
- */
- // TODO: Account for all the other shapes
-operation newNodeStyle(shape : String) : ODesign!diagram::description::style::NodeStyleDescription {
-	var style : ODesign!NodeStyleDescription;
-	if (shape = "square") {
-		style := new ODesign!diagram::description::style::SquareDescription;
-	}
-	else if (shape = "diamond") {
-		style := new ODesign!diagram::description::style::LozengeNodeDescription;
-		style.heightComputationExpression := "[view.name.size()+5/]";
-		style.widthDiameterComputationExpression := "[view.name.size()+5/]";
-	}
-	else {
-		style := new ODesign!diagram::description::style::EllipseNodeDescription;
-		style.horizontalDiameterComputationExpression := "[view.name.size()+3/]";
-		style.verticalDiameterComputationExpression := "4";
-	}
-	 	
- 	return style;
- }
-
-/**
- * NAVIGATION -----------------------------------------------------------------
- */
- 
-@cached
-operation ODesign!viewpoint::description::RepresentationElementMapping getLayer()
-			: ODesign!diagram::description::Layer {
-	return self.eContainer();
-}
-
-@cached
-operation ODesign!diagram::description::DiagramDescription getLayer()
-			: ODesign!diagram::description::Layer {
-	if (self.defaultLayer.isUndefined()) {
-		self.defaultLayer := new ODesign!diagram::description::Layer;
-		self.defaultLayer.name := 'Default';
-	}
-	return self.defaultLayer;
-}
-
-@cached
-operation ODesign!viewpoint::description::RepresentationElementMapping getDiagram()
-			: ODesign!diagram::description::DiagramDescription {
-	return self.getLayer().getDiagram();
-}
-
-@cached
-operation ODesign!diagram::description::Layer getDiagram()
-			: ODesign!diagram::description::DiagramDescription {
-	return self.eContainer();
-}
-
-@cached
-operation ODesign!viewpoint::description::RepresentationElementMapping getViewpoint()
-			: ODesign!viewpoint::description::Viewpoint {
-	return self.getDiagram().getViewpoint();
-}
-
-@cached
-operation ODesign!diagram::description::Layer getViewpoint()
-			: ODesign!viewpoint::description::Viewpoint {
-	return self.getDiagram().getViewPoint();
-}
-
-@cached
-operation ODesign!diagram::description::DiagramDescription getViewpoint()
-			: ODesign!viewpoint::description::Viewpoint {
-	return self.eContainer();
-}
-
-@cached
-operation ODesign!viewpoint::description::RepresentationElementMapping getGroup()
-			: ODesign!viewpoint::description::Group {
-	return self.getViewpoint().getGroup();
-}
-
-@cached
-operation ODesign!viewpoint::description::Layer getGroup()
-			: ODesign!viewpoint::description::Group {
-	return self.getViewpoint().getGroup();
-}
-
-@cached
-operation ODesign!viewpoint::description::DiagramDescription getGroup()
-			: ODesign!viewpoint::description::Group {
-	return self.getViewpoint().getGroup();
-}
-
-@cached
-operation ODesign!viewpoint::description::Viewpoint getGroup()
-			: ODesign!viewpoint::description::Group {
-	return self.eContainer();
 }
