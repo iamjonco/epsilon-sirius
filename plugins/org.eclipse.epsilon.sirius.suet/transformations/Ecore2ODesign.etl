@@ -140,6 +140,54 @@ rule Node
 	}
 }
 
+rule ElementLink
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::EdgeMapping {
+	guard: s.isLink()
+	
+	var ann := s.getAnnotation('gmf.link');
+	
+	getDiagramClass().equivalent().defaultLayer.edgeMappings.add(t);
+	
+	t.name := s.name;
+	t.domainClass := s.getDomainClassString();
+	t.useDomainElement := true;
+	
+	// Determine source mappings
+	var sourceDet := ann.getDetail('source');
+	var sourceFeature := s.eStructuralFeatures.selectOne(sf|sf.name = sourceDet);
+	t.sourceMapping.addAll(sourceFeature.eType.getAllSuperMappings());
+	t.sourceFinderExpression := 'feature:' + sourceDet;
+	
+	
+	var targetDet := ann.getDetail('target');
+	var targetFeature := s.eStructuralFeatures.selectOne(sf|sf.name = targetDet);
+	t.targetMapping.addAll(targetFeature.eType.getAllSuperMappings());
+	t.targetFinderExpression := 'feature:' + targetDet;
+	
+	t.style := new ODesign!EdgeStyleDescription;	
+}
+
+rule RelationLink
+	transform s : ECore!EReference
+	to t : ODesign!diagram::description::EdgeMapping {
+	guard: s.isLink()
+	
+	getDiagramClass().equivalent().defaultLayer.edgeMappings.add(t);
+	
+	var source := s.eContainingClass.equivalents().selectOne(n|n.isTypeOf(ODesign!NodeMapping));
+	var target := s.eReferenceType.equivalents().selectOne(n|n.isTypeOf(ODesign!NodeMapping));
+	
+	t.name := source.name + '2' + target.name;
+	t.useDomainElement := false;
+	// TODO: account for subtypes as well
+	t.sourceMapping.add(source);
+	t.targetMapping.add(source);
+	t.targetFinderExpression := 'feature:' + s.name;
+	
+	t.style := new ODesign!EdgeStyleDescription;
+}
+
 rule NodeTool 
 	transform s : ECore!EClass
 	to t : ODesign!NodeCreationDescription {
@@ -233,4 +281,12 @@ operation resolveContainmentPath(start, propertyMap) : Sequence {
 	}
 	
 	return path;
+}
+
+operation ECore!EClass getAllSuperMappings() : Set {
+	var mappings := new Set;
+	for (es in self.getConcreteSubtypes()) {
+		mappings.addAll(es.equivalents().select(n|n.isTypeOf(ODesign!NodeMapping)));
+	}
+	return mappings;
 }
