@@ -120,3 +120,8 @@ operation ECore!EClass getContainmentReferences() {
 	return self.eAllStructuralFeatures.select(sf : ECore!EReference | sf.containment);
 }
 
+@cached
+operation ECore!EClass getConcreteSubtypes() {
+	return ECore!EClass.all.select(e|(not e.abstract) and (e.eAllSuperTypes.includes(self) or e = self));
+}
+
