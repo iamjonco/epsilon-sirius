@@ -1,11 +1,8 @@
 import 'EcoreUtil.eol';
 import 'SiriusUtil.eol';
 
-pre {	
-	// Setup inital structures
-	var diagramClass := getDiagramClass();
-	var diagramAnn := diagramClass.getAnnotation('gmf.diagram');
-	
+pre {
+	// Setup inital structures	
 	// TODO: Handle multiple Groups
 	var topGroup : new ODesign!viewpoint::description::Group;
 	topGroup.name := getDiagramClass().name;
@@ -14,12 +11,13 @@ pre {
 	var topViewpoint : new ODesign!viewpoint::description::Viewpoint;
 	topViewpoint.name := getDiagramClass().name;
 	topViewpoint.modelFileExtension := 
-		diagramAnn.getAnnotationValue('gmf.diagram','model.extension').ifUndefined('*');
+		getDiagramClass().getAnnotationValue('gmf.diagram','model.extension').ifUndefined('*');
 	topGroup.ownedViewpoints.add(topViewpoint);
 	
 	// Setup Default Colors
 	var DEFAULT_PALETTE : ODesign!viewpoint::description::UserColorsPalette := 
 		new ODesign!UserColorsPalette;
+	DEFAULT_PALETTE.name := 'Default';
 		
 	topGroup.userColorsPalettes.add(DEFAULT_PALETTE);
 	
@@ -36,11 +34,6 @@ pre {
 	DEFAULT_PALETTE.entries.add(DEFAULT_LINE_COLOR);
 	DEFAULT_PALETTE.entries.add(DEFAULT_BORDER_COLOR);
 	DEFAULT_PALETTE.entries.add(DEFAULT_LABEL_COLOR);
-	
-	// Setup a Default Tool Section
-	var DEFAULT_TOOL : ODesign!diagram::description::tool::ToolSection :=
-		new ODesign!ToolSection;
-	DEFAULT_TOOL.name := 'Default';
 }
 
 // TODO: Handle multiple metamodel imports
@@ -72,9 +65,9 @@ rule Node
 	guard: s.isNode()
 	
 	var ann := s.getAnnotation('gmf.node');
-	
+
 	// TODO: Handle multi diagrams
-	topViewpoint.ownedRepresentations.first().defaultLayer.nodeMappings.add(t);
+	getDiagramClass().equivalent().defaultLayer.nodeMappings.add(t);
 	
 	// Setup creation constraints
 	t.name := s.name; // Diagram Description ID/Label - not shown to end user
@@ -127,10 +120,10 @@ rule Node
 	var borderStyleDet := ann.getDetail('border.style');
 	var borderStyle : Any;
 	switch (borderStyleDet) {
-		case 'dot': return ODesign!diagram::LineStyle#dot;
-		case 'dash': return ODesign!diagram::LineStyle#dash;
-		case 'dash_dot': return ODesign!diagram::LineStyle#dash_dot;
-		default: return ODesign!diagram::LineStyle#solid;
+		case 'dot': borderStyle := ODesign!diagram::LineStyle#dot;
+		case 'dash': borderStyle := ODesign!diagram::LineStyle#dash;
+		case 'dash_dot': borderStyle := ODesign!diagram::LineStyle#dash_dot;
+		default: borderStyle := ODesign!diagram::LineStyle#solid;
 	}
 	t.style.borderLineStyle := borderStyle;
 
@@ -147,4 +140,97 @@ rule Node
 	}
 }
 
+rule NodeTool 
+	transform s : ECore!EClass
+	to t : ODesign!NodeCreationDescription {
+	guard: s.isNode()
+	
+	var ann := s.getAnnotation('gmf.node');
 
+	// Get the tool section
+	var toolSection := getDiagramClass().equivalent().defaultLayer.toolSections
+		.selectOne(t|t.name = 'New');
+	if (toolSection.isUndefined()) {
+		toolSection := new ODesign!ToolSection;
+		toolSection.name := 'New';
+		getDiagramClass().equivalent().defaultLayer.toolSections.add(toolSection);
+	}
+	toolSection.ownedTools.add(t);
+	
+	// Initialise mappings
+	t.nodeMappings.add(s.equivalents().selectOne(n|n.type().name = 'NodeMapping'));
+		
+	// Initialise default container variables
+	t.name := "Create" + s.name;
+	t.variable := new ODesign!NodeCreationVariable;
+	t.variable.name := "container";
+	t.viewVariable := new ODesign!ContainerViewVariable;
+	t.viewVariable.name := "containerView";
+	
+	// Build the operation
+	var path := s.getContainmentPath();
+
+	var rootOp := new ODesign!InitialNodeCreationOperation;
+	t.initialOperation := rootOp;
+
+	var contextOp := new ODesign!ChangeContext;
+	rootOp.firstModelOperations := contextOp;
+	contextOp.browseExpression := "eol:self";
+	var i = path.size() - 1;
+	while (i > 0) {
+		contextOp.browseExpression += ',' + path[i];
+		i := i - 1;
+	}
+		
+	var createOp := new ODesign!CreateInstance;
+	contextOp.subModelOperations.add(createOp);
+	createOp.typeName := s.getDomainClassString();
+	createOp.referenceName := path[0];	
+}
+
+@cached
+operation ECore!EClass getContainmentPath() : Sequence {
+	var toVisit := new Sequence;
+	var visited := new Set;
+	var propertyMap := new Map;
+	toVisit.add(getDiagramClass());
+	propertyMap.put(getDiagramClass(), null);
+	
+	while (toVisit.notEmpty()) {
+		var current := toVisit.first();
+		visited.add(current);
+		toVisit.remove(current);
+		
+		var refs := current.getContainmentReferences();
+		for (r in refs) {
+			var property := Sequence{current, r};
+			propertyMap.put(r.eType, property);
+			
+			if (self.eAllSuperTypes.includes(r.eType) or self = r.eType) {
+				return resolveContainmentPath(r.eType, propertyMap);
+			}
+		
+			if (visited.excludes(r.eType)) {
+				toVisit.add(r.eType);
+			}
+		}
+	}
+}
+
+operation resolveContainmentPath(start, propertyMap) : Sequence {
+	var path := new Sequence;
+	var eType := start;	
+	var notFinished := true;
+	
+	while(notFinished) {
+		var property := propertyMap.get(eType);
+		if (property.isDefined()) {
+			eType := property.first();
+			path.add(property.second().name);
+		} else {
+			notFinished = false;
+		}
+	}
+	
+	return path;
+}
