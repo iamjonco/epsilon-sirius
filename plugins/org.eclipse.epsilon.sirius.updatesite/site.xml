@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.epsilon.sirius_1.0.0.qualifier.jar" id="org.eclipse.epsilon.sirius" version="1.0.0.qualifier">
+      <category name="epsilon-sirius"/>
+   </feature>
+   <category-def name="epsilon-sirius" label="Epsilon-Sirius"/>
+</site>
