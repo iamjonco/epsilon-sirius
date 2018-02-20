@@ -84,6 +84,18 @@ operation ECore!EClass isNode() : Boolean {
 }
 
 @cached
+operation ECore!EClass hasContainment() : Boolean {
+	if (not self.isNode()) return false;
+	return not self.getContainmentReferences().isEmpty();
+}
+
+@cached
+operation ECore!EClass isPhantom() : Boolean {
+	if (not self.isNode()) return false;
+	return self.getDetail("phantom").ifUndefined(false).asBoolean();
+}
+
+@cached
 operation ECore!EClass getLabelExpression() : Any {
 	var ann : String;
 	if (self.isNode()) ann := 'gmf.node';

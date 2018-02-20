@@ -38,7 +38,7 @@ pre {
 
 // TODO: Handle multiple metamodel imports
 // TODO: do we need multiple tool sections?
-// FIXME: Href link in metamodel that is generated sucks
+// FIXME: Href link in metamodel that is generated is not well formatted
 // TODO: Handle multiple layers - probs should be the nodes that set it
 rule Diagram
 	transform s : ECore!EClass
@@ -72,8 +72,8 @@ rule Node
 	// Setup creation constraints
 	t.name := s.name; // Diagram Description ID/Label - not shown to end user
 	t.domainClass := s.getDomainClassString();
-	t.semanticCandidatesExpression := "eol:" + s.name +".allOfType";
-	t.preconditionExpression := "eol:self.type().name = '" + s.name + "'";	
+	t.semanticCandidatesExpression := "eol:" + s.getDomainClassString() +".allOfType";
+	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";	
 	
 	// Style - initial setup
 	// TODO: Account for all the other shapes/icons
@@ -197,19 +197,19 @@ rule NodeTool
 
 	// Get the tool section
 	var toolSection := getDiagramClass().equivalent().defaultLayer.toolSections
-		.selectOne(t|t.name = 'New');
+		.selectOne(t|t.name = 'Node');
 	if (toolSection.isUndefined()) {
 		toolSection := new ODesign!ToolSection;
-		toolSection.name := 'New';
+		toolSection.name := 'Node';
 		getDiagramClass().equivalent().defaultLayer.toolSections.add(toolSection);
 	}
 	toolSection.ownedTools.add(t);
 	
 	// Initialise mappings
-	t.nodeMappings.add(s.equivalents().selectOne(n|n.type().name = 'NodeMapping'));
+	t.nodeMappings.add(s.equivalents().selectOne(n|n.isTypeOf(ODesign!NodeMapping)));
 		
 	// Initialise default container variables
-	t.name := "Create" + s.name;
+	t.name := s.name;
 	t.variable := new ODesign!NodeCreationVariable;
 	t.variable.name := "container";
 	t.viewVariable := new ODesign!ContainerViewVariable;
