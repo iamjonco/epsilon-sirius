@@ -3,11 +3,14 @@ package org.eclipse.epsilon.sirius.common.ocl.business.internal.interpreter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.EolModule;
@@ -15,6 +18,7 @@ import org.eclipse.epsilon.eol.exceptions.EolEvaluatorException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.types.EolModelElementType;
+import org.eclipse.epsilon.eol.types.EolType;
 import org.eclipse.sirius.common.tools.api.interpreter.EvaluationException;
 import org.eclipse.sirius.common.tools.api.interpreter.IInterpreter;
 import org.eclipse.sirius.common.tools.api.interpreter.IInterpreterContext;
@@ -165,6 +169,7 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
                 }
             }
         }
+
         return result;
 	}
 
@@ -172,35 +177,69 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 	public Object evaluate(EObject target, String expression) throws EvaluationException {
 		// Initial checks
 		if (expression.trim().equals(EolInterpreter.EOL_PREFIX)) return null;
+		this.setVariable("self", target);
 		
 		Object result = null;
-		IEolContext eolContext = null;
+		IEolContext context = null;
 		try {
 			final EolModule module = new EolModule();
-			final InMemoryEmfModel model = new InMemoryEmfModel(target.eResource());
-			model.setName("Model"); // FIXME: situation where there is more than one model
-			eolContext = module.getContext();
-			eolContext.getModelRepository().addModel(model);
+			final Map<Resource, InMemoryEmfModel> models = new HashMap<Resource, InMemoryEmfModel>();
 			
-			// Process EOL - sirius_target used to give a single object to execute query against
-			final String eol = String.format("return %s;", expression.substring(EolInterpreter.EOL_PREFIX.length())).replace("self", "sirius_target");
+			// Setup Semantic Model
+			final InMemoryEmfModel semanticModel = new InMemoryEmfModel(target.eResource());
+			models.put(target.eResource(), semanticModel);
+			semanticModel.setName("Model"); // FIXME: situation where there is more than one model
+			context = module.getContext();
+			context.getModelRepository().addModel(semanticModel);
+			
+			// FIXME: isKindOf expressions not working correctly -> isTypeOf works correctly
+			final String targetTypeName = semanticModel.getTypeNameOf(target);
+			context.getFrameStack().putGlobal(
+				new Variable(
+						"sirius_target", 
+						target, 
+						new EolModelElementType(targetTypeName, context)
+			));
+			
+			// Setup Variables Models
+			for (Entry<String, ?> e : this.getVariables().entrySet()) {
+				
+				InMemoryEmfModel model;
+				if (e.getValue() instanceof EObject) {
+					Resource res = ((EObject) e.getValue()).eResource();
+					model = models.get(res);
+										
+					// Model does not exist, create it and store
+					if (model == null && res != null) {
+						model = new InMemoryEmfModel(res);
+						models.put(res, model);
+						context.getModelRepository().addModel(model);
+					}
+					
+					if (model != null) {
+						final String typeName = model.getTypeNameOf(e.getValue());
+						final EolType eolType = new EolModelElementType(typeName, context);
+						final Variable variable = new Variable(e.getKey(), e.getValue(), eolType);
+						context.getFrameStack().putGlobal(variable);
+					}
+				}
+			}
+			
+			final String eol = String.format("return %s;", expression.substring(EolInterpreter.EOL_PREFIX.length()));
 			module.parse(eol);
 			if (module.getParseProblems().size() > 0) {
 				throw new EolEvaluatorException(module.getParseProblems());
 			}
 			
-			// FIXME: isKindOf expressions not working correctly -> isTypeOf works correctly
-			final String targetTypeName = model.getTypeNameOf(target);
-			eolContext.getFrameStack().putGlobal(new Variable("sirius_target", target, new EolModelElementType(targetTypeName, eolContext)));
-			
 			result = module.execute();
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 			throw new EvaluationException(e);
 		} finally {
-			if (eolContext != null) eolContext.dispose();
+			if (context != null) context.dispose();
 		}
-		System.out.println("Result: " + result);
+		
 		return result;
 	}
 
