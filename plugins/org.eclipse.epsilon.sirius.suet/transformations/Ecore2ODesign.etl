@@ -36,133 +36,137 @@ pre {
 	DEFAULT_PALETTE.entries.add(DEFAULT_LABEL_COLOR);
 }
 
+post {
+	// Assign top level diagram mappings
+	var topMappings := getDiagramClass()
+		.getEAllContainments()
+		.collect(r|r.eReferenceType)
+		.collect(t|t.getConcreteSubMappings())
+		.flatten();
+	
+	var layer := getDiagramClass().equivalent('EClass2DiagramDescription').defaultLayer; // TODO: Handle multiple layers
+	for (mapping in topMappings) {
+		if (mapping.isMapped())
+			layer.reusedMappings.add(mapping);
+		else if (mapping.isKindOf(ODesign!ContainerMapping))
+			layer.containerMappings.add(mapping);
+		else
+			layer.nodeMappings.add(mapping);
+	}
+	
+	// Assign container mappings
+	for (class in ECore!EClass) {
+		var topMapping := class.getMapping();
+		if (topMapping.isUndefined()) continue; // FIXME: Current gets the diagram class too
+	
+		var subMappings := class
+			.getEAllContainments()
+			.collect(r|r.eReferenceType)
+			.collect(t|t.getConcreteSubMappings())
+			.flatten();
+			
+		for (mapping in subMappings) {
+			if (mapping.isMapped()) 
+				if (mapping.isKindOf(ODesign!ContainerMapping)) 
+					topMapping.reusedContainerMappings.add(mapping);
+				else 
+					topMapping.reusedNodeMappings.add(mapping);
+					
+			else if (mapping.isKindOf(ODesign!ContainerMapping))
+				topMapping.subContainerMappings.add(mapping);
+			else 
+				topMapping.subNodeMappings.add(mapping);
+		}
+	}
+}
+
 // TODO: Handle multiple metamodel imports
 // TODO: do we need multiple tool sections?
 // FIXME: Href link in metamodel that is generated is not well formatted
 // TODO: Handle multiple layers - probs should be the nodes that set it
-rule Diagram
+rule EClass2DiagramDescription
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::DiagramDescription {
 	guard: s.isAnnotatedAs('gmf.diagram')
 	
-	var ann := s.getAnnotation('gmf.diagram');
-
+	topViewpoint.ownedRepresentations.add(t);
+	
 	t.name := s.getAnnotationValue('gmf.diagram', 'label').ifUndefined('Diagram');
 	t.domainClass = s.getDomainClassString();
 	t.metamodel.add(s.ePackage);
 	
 	// Setup Layers
 	// TODO: handle additional layering
-	t.defaultLayer := new ODesign!Layer;
-	t.defaultLayer.name := 'Default';
-
-	topViewpoint.ownedRepresentations.add(t);
+	var layer := new ODesign!Layer;
+	layer.name := 'Default';
+	t.defaultLayer := layer;
 }
 
-rule Node 
-	transform s : ECore!EClass
-	to t : ODesign!diagram::description::NodeMapping {
-	guard: s.isNode()
-	
-	var ann := s.getAnnotation('gmf.node');
+/**
+ * ============================================================================
+ * SEMANTIC MAPPINGS
+ * ============================================================================
+ */
 
-	// TODO: Handle multi diagrams
-	getDiagramClass().equivalent().defaultLayer.nodeMappings.add(t);
+/**
+ * Abstract base rule for mappings between EClass's and DiagramElements.
+ * 
+ * Sets up constraints to restrict the creation of elements
+ */
+@abstract
+rule EClass2Mapping
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::DiagramElementMapping {
+	guard: s.isNode() or s.isLink()
 	
 	// Setup creation constraints
-	t.name := s.name; // Diagram Description ID/Label - not shown to end user
+	t.name := s.name;
 	t.domainClass := s.getDomainClassString();
-	t.semanticCandidatesExpression := "eol:" + s.getDomainClassString() +".allOfType";
-	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";	
-	
-	// Style - initial setup
-	// TODO: Account for all the other shapes/icons
-	var style : ODesign!NodeStyleDescription;
-	var shape := ann.getDetail('shape');
-	if (shape = "square") {
-		style := new ODesign!SquareDescription;
-	}
-	else if (shape = "diamond") {
-		style := new ODesign!LozengeNodeDescription;
-		style.heightComputationExpression := "[view.name.size()+5/]";
-		style.widthDiameterComputationExpression := "[view.name.size()+5/]";
-	}
-	else {
-		style := new ODesign!EllipseNodeDescription;
-		style.horizontalDiameterComputationExpression := "[view.name.size()+3/]";
-		style.verticalDiameterComputationExpression := "4";
-	}
-	
-	t.style := style;
-	
-	var colorDet := ann.getDetail('color');
-	if (colorDet.isDefined()) {
-		t.style.color := newColor(s.name + '_COLOR', colorDet);
-	} else {
-		t.style.color := DEFAULT_COLOR;
-	}
-	
-	var resizeable := ann.getDetail('resizeable').ifUndefined(true);
-	if (resizeable.asBoolean()) {
-		t.style.resizeKind := ODesign!diagram::ResizeKind#NSEW;
-	} else {
-		t.style.resizeKind := ODesign!diagram::ResizeKind#NONE;
-	}
-	
-	// Style - Borders
-	var borderColorDet := ann.getDetail('border.color');
-	if (borderColorDet.isDefined()) {
-		t.style.borderColor := newColor(s.name + '_BORDER', borderColorDet);
-	} else {
-		t.style.borderColor := DEFAULT_BORDER_COLOR;
-	}
-	
-	var borderStyleDet := ann.getDetail('border.style');
-	var borderStyle : Any;
-	switch (borderStyleDet) {
-		case 'dot': borderStyle := ODesign!diagram::LineStyle#dot;
-		case 'dash': borderStyle := ODesign!diagram::LineStyle#dash;
-		case 'dash_dot': borderStyle := ODesign!diagram::LineStyle#dash_dot;
-		default: borderStyle := ODesign!diagram::LineStyle#solid;
-	}
-	t.style.borderLineStyle := borderStyle;
+	//t.semanticCandidatesExpression := "eol:" + s.getDomainClassString() + ".allOfType";
+	t.semanticCandidatesExpression := "eol:self.eContents";
+	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";
+}
 
-	// Style - Labelling
-	// TODO: style.hideLabelByDefault 
-	t.style.labelExpression := s.getLabelExpression(); // FIXME: Not sure this works correctly
-	t.style.labelPosition := s.getLabelPlacement();
-	
-	var labelColorDet := ann.getDetail('label.color');
-	if (labelColorDet.isDefined()) {
-		t.style.labelColor := newColor(s.name + '_LABEL', labelColorDet);
-	} else {
-		t.style.labelColor := DEFAULT_LABEL_COLOR;
-	}
+rule EClass2ContainerMapping
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::ContainerMapping
+	extends EClass2Mapping {
+	guard: s.isNode() and s.hasCompartments()
+		
+
+	//getDiagramClass().equivalent().defaultLayer.containerMappings.add(t);
+}
+
+rule EClass2NodeMapping
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::NodeMapping 
+	extends EClass2Mapping {
+	guard: s.isNode() and not s.hasCompartments()
 }
 
 rule ElementLink
 	transform s : ECore!EClass
-	to t : ODesign!diagram::description::EdgeMapping {
+	to t : ODesign!diagram::description::EdgeMapping
+	extends EClass2Mapping {
 	guard: s.isLink()
 	
 	var ann := s.getAnnotation('gmf.link');
 	
 	getDiagramClass().equivalent().defaultLayer.edgeMappings.add(t);
 	
-	t.name := s.name;
-	t.domainClass := s.getDomainClassString();
+
 	t.useDomainElement := true;
 	
 	// Determine source mappings
 	var sourceDet := ann.getDetail('source');
 	var sourceFeature := s.eStructuralFeatures.selectOne(sf|sf.name = sourceDet);
-	t.sourceMapping.addAll(sourceFeature.eType.getAllSuperMappings());
+	t.sourceMapping.addAll(sourceFeature.eType.getConcreteSubMappings());
 	t.sourceFinderExpression := 'feature:' + sourceDet;
 	
 	
 	var targetDet := ann.getDetail('target');
 	var targetFeature := s.eStructuralFeatures.selectOne(sf|sf.name = targetDet);
-	t.targetMapping.addAll(targetFeature.eType.getAllSuperMappings());
+	t.targetMapping.addAll(targetFeature.eType.getConcreteSubMappings());
 	t.targetFinderExpression := 'feature:' + targetDet;
 	
 	t.style := new ODesign!EdgeStyleDescription;	
@@ -175,23 +179,127 @@ rule RelationLink
 	
 	getDiagramClass().equivalent().defaultLayer.edgeMappings.add(t);
 	
-	var source := s.eContainingClass.equivalents().selectOne(n|n.isTypeOf(ODesign!NodeMapping));
-	var target := s.eReferenceType.equivalents().selectOne(n|n.isTypeOf(ODesign!NodeMapping));
+	var source := s.eContainingClass.getConcreteSubMappings();
+	var target := s.eReferenceType.getConcreteSubMappings();
 	
 	t.name := source.name + '2' + target.name;
 	t.useDomainElement := false;
 	// TODO: account for subtypes as well
-	t.sourceMapping.add(source);
-	t.targetMapping.add(source);
+	t.sourceMapping.addAll(source);
+	t.targetMapping.addAll(target);
 	t.targetFinderExpression := 'feature:' + s.name;
 	
 	t.style := new ODesign!EdgeStyleDescription;
 }
 
+/**
+ * ============================================================================
+ * STYLE DESCRIPTIONS
+ * ============================================================================
+ */
+@abstract
+rule EClass2LabelStyleDescription
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::LabelStyleDescription {
+	guard: s.isNode()
+	
+	t.labelExpression := s.getLabelExpression();
+	
+	var colorDet := s.getAnnotationValue('gmf.node', 'label.color');
+	if (colorDet.isDefined()) t.labelColor := newColor(s.name + '_LABEL', colorDet);
+	else t.labelColor := DEFAULT_LABEL_COLOR;
+}
+
+@abstract
+rule EClass2BorderdStyleDescription
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::BorderedStyleDescription {
+	guard: s.isNode()
+	
+	// Border Line Style
+	var lineDet := s.getAnnotationValue('gmf.node', 'border.style');
+	var line : Any;
+	switch (lineDet) {
+		case 'dot': t.borderLineStyle := ODesign!diagram::LineStyle#dot;
+		case 'dash': t.borderLineStyle := ODesign!diagram::LineStyle#dash;
+		case 'dash_dot': t.borderLineStyle := ODesign!diagram::LineStyle#dash_dot;
+		default: t.borderLineStyle := ODesign!diagram::LineStyle#solid;
+	}
+	
+	// Border Color
+	var colorDet := s.getAnnotationValue('gmf.node', 'border.color');
+	if (colorDet.isDefined()) t.borderColor := newColor(s.name + '_BORDER', colorDet);
+	else t.borderColor := DEFAULT_BORDER_COLOR;
+}
+
+@abstract
+rule EClass2NodeStyleDescription 
+	transform s : ECore!EClass
+	to t : ODesign!NodeStyleDescription
+	extends EClass2LabelStyleDescription, EClass2BorderdStyleDescription {
+	guard: s.isNode() and not s.hasCompartments()
+	
+	s.equivalent('EClass2NodeMapping').style := t;
+}
+
+@abstract
+rule EClass2NodeStyleWithColor 
+	transform s : ECore!EClass
+	to t : ODesign!NodeStyleDescription
+	extends EClass2NodeStyleDescription {
+	
+	var colorDet := s.getAnnotationValue('gmf.node', 'color');
+	if (colorDet.isDefined()) t.color := newColor(s.name + '_COLOR', colorDet);
+	else t.color := DEFAULT_COLOR;
+}
+
+rule EClass2SquareDescription
+	transform s : ECore!EClass
+	to t : ODesign!SquareDescription
+	extends EClass2NodeStyleWithColor {
+	guard: s.getAnnotationValue('gmf.node', 'shape') == 'square'
+}
+
+rule EClass2LozengeNodeDescription
+	transform s : ECore!EClass
+	to t : ODesign!LozengeNodeDescription
+	extends EClass2NodeStyleWithColor {
+	guard: s.getAnnotationValue('gmf.node', 'shape') == 'diamond'
+	
+	t.heightComputationExpression := "[view.name.size()+5/]";
+	t.widthComputationExpression := "[view.name.size()+5/]";
+}
+
+rule EClass2EllipseNodeDescription
+	transform s : ECore!EClass
+	to t : ODesign!EllipseNodeDescription
+	extends EClass2NodeStyleWithColor {
+	guard: s.getAnnotationValue('gmf.node', 'shape') == 'ellipse' 
+		or s.getAnnotationValue('gmf.node', 'shape') == null
+
+	t.horizontalDiameterComputationExpression := "[view.name.size()+3/]";
+	t.verticalDiameterComputationExpression := "4";
+}
+
+rule EClass2FlatContainerStyleDescription
+	transform s : ECore!EClass
+	to t : ODesign!FlatContainerStyleDescription
+	extends EClass2LabelStyleDescription, EClass2BorderdStyleDescription {
+	guard: s.isNode() and s.hasCompartments()
+	
+	s.equivalent('EClass2ContainerMapping').style := t;
+}
+
+/**
+ * ============================================================================
+ * TOOLS
+ * ============================================================================
+ */
+ 
 rule NodeTool 
 	transform s : ECore!EClass
 	to t : ODesign!NodeCreationDescription {
-	guard: s.isNode()
+	guard: s.isNode() and s.getCompartmentReferences().isEmpty()
 	
 	var ann := s.getAnnotation('gmf.node');
 
@@ -236,8 +344,14 @@ rule NodeTool
 	createOp.referenceName := path[0];	
 }
 
+/**
+ * ============================================================================
+ * HELPER OPERATIONS
+ * ============================================================================
+ */
+
 @cached
-operation ECore!EClass getContainmentPath() : Sequence {
+operation ECore!EClass getContainmentPath() : Collection {
 	var toVisit := new Sequence;
 	var visited := new Set;
 	var propertyMap := new Map;
@@ -265,7 +379,13 @@ operation ECore!EClass getContainmentPath() : Sequence {
 	}
 }
 
-operation resolveContainmentPath(start, propertyMap) : Sequence {
+operation ODesign!DiagramElementMapping isMapped() : Boolean {
+	return self.eContainer.isDefined() 
+		and (self.eContainer.isTypeOf(ODesign!Layer) 
+		or self.eContainer.isKindOf(ODesign!ContainerMapping));
+}
+
+operation resolveContainmentPath(start, propertyMap) : Collection {
 	var path := new Sequence;
 	var eType := start;	
 	var notFinished := true;
@@ -279,14 +399,18 @@ operation resolveContainmentPath(start, propertyMap) : Sequence {
 			notFinished = false;
 		}
 	}
-	
 	return path;
 }
 
-operation ECore!EClass getAllSuperMappings() : Set {
-	var mappings := new Set;
-	for (es in self.getConcreteSubtypes()) {
-		mappings.addAll(es.equivalents().select(n|n.isTypeOf(ODesign!NodeMapping)));
-	}
-	return mappings;
+@cached
+operation ECore!EClass getConcreteSubMappings() : Collection {
+	return self.getConcreteSubtypes()
+		.flatten()
+		.collect(t|t.getMapping())
+		.select(m|m.isDefined());
+}
+
+@cached
+operation ECore!EClass getMapping() : ODesign!DiagramElementMapping {
+	return self.equivalent('EClass2ContainerMapping', 'EClass2NodeMapping');
 }

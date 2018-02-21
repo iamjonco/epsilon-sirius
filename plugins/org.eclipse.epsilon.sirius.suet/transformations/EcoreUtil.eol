@@ -84,9 +84,13 @@ operation ECore!EClass isNode() : Boolean {
 }
 
 @cached
-operation ECore!EClass hasContainment() : Boolean {
-	if (not self.isNode()) return false;
-	return not self.getContainmentReferences().isEmpty();
+operation ECore!EClass getNodeAnn() : ECore!EAnnotation {
+	return self.getAnnotation('gmf.node');
+}
+
+@cached
+operation ECore!EClass getCompartmentReferences() : Collection {
+	return self.getContainmentReferences().select(r|r.isAnnotatedAs('gmf.compartment'));
 }
 
 @cached
@@ -104,12 +108,13 @@ operation ECore!EClass getLabelExpression() : Any {
 	var label := self.getAnnotationValue(ann, 'label');
 	if (label.isDefined()) return "feature:" + label;
 	
-	label := self.getAnnotationValue(ann, 'label.eol');
-	if (label.isDefined()) return 'eol:' + label;
+	var labelEol := self.getAnnotationValue(ann, 'label.eol');
+	if (labelEol.isDefined()) return 'eol:' + labelEol;
 	
-	return 'feature:name'; // FIXME: Original EOL required a lebel detail
+	return 'feature:name'; // FIXME: Original EOL required a label detail
 }
 
+// FIXME: not used currently
 @cached
 operation ECore!EClass getLabelPlacement() : Any {
 	var ann : String;
@@ -133,7 +138,11 @@ operation ECore!EClass getContainmentReferences() {
 }
 
 @cached
-operation ECore!EClass getConcreteSubtypes() {
+operation ECore!EClass getConcreteSubtypes() : Collection {
 	return ECore!EClass.all.select(e|(not e.abstract) and (e.eAllSuperTypes.includes(self) or e = self));
 }
 
+@cached
+operation ECore!EClass hasCompartments() : Boolean {
+	return self.isNode() and self.getContainmentReferences().exists(r|r.isAnnotatedAs('gmf.compartment'));
+}
