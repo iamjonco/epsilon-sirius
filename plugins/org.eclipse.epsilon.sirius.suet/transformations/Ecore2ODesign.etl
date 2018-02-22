@@ -1,6 +1,9 @@
 import 'EcoreUtil.eol';
 import 'SiriusUtil.eol';
 
+/**
+ * PRE BLOCK - Sets up initial structures in diagram
+ */
 pre {
 	// Setup inital structures	
 	// TODO: Handle multiple Groups
@@ -36,6 +39,10 @@ pre {
 	DEFAULT_PALETTE.entries.add(DEFAULT_LABEL_COLOR);
 }
 
+/**
+ * POST BLOCK - Responsible for fixing containment references throughout the
+ * transformation.
+ */
 post {
 	// Assign top level diagram mappings
 	var topMappings := getDiagramClass()
@@ -44,7 +51,7 @@ post {
 		.collect(t|t.getConcreteSubMappings())
 		.flatten();
 	
-	var layer := getDiagramClass().equivalent('EClass2DiagramDescription').defaultLayer; // TODO: Handle multiple layers
+	var layer := getDiagramMapping().defaultLayer; // TODO: Handle multiple layers
 	for (mapping in topMappings) {
 		if (mapping.isMapped())
 			layer.reusedMappings.add(mapping);
@@ -56,7 +63,7 @@ post {
 	
 	// Assign container mappings
 	for (class in ECore!EClass) {
-		var topMapping := class.getMapping();
+		var topMapping := class.getNodeMapping();
 		if (topMapping.isUndefined()) continue; // FIXME: Current gets the diagram class too
 	
 		var subMappings := class
@@ -148,9 +155,8 @@ rule ElementLink
 	
 	var ann := s.getAnnotation('gmf.link');
 	
-	getDiagramClass().equivalent().defaultLayer.edgeMappings.add(t);
+	getDiagramMapping().defaultLayer.edgeMappings.add(t);
 	
-
 	t.useDomainElement := true;
 	
 	// Determine source mappings
@@ -172,7 +178,7 @@ rule RelationLink
 	to t : ODesign!diagram::description::EdgeMapping {
 	guard: s.isLink()
 	
-	getDiagramClass().equivalent().defaultLayer.edgeMappings.add(t);
+	getDiagramMapping().defaultLayer.edgeMappings.add(t);
 	
 	var source := s.eContainingClass.getConcreteSubMappings();
 	var target := s.eReferenceType.getConcreteSubMappings();
@@ -300,12 +306,12 @@ rule NodeTool
 	var ann := s.getAnnotation('gmf.node');
 
 	// Get the tool section
-	var toolSection := getDiagramClass().equivalent().defaultLayer.toolSections
+	var toolSection := getDiagramMapping().defaultLayer.toolSections
 		.selectOne(t|t.name = 'Node');
 	if (toolSection.isUndefined()) {
 		toolSection := new ODesign!ToolSection;
 		toolSection.name := 'Node';
-		getDiagramClass().equivalent().defaultLayer.toolSections.add(toolSection);
+		getDiagramMapping().defaultLayer.toolSections.add(toolSection);
 	}
 	toolSection.ownedTools.add(t);
 	
@@ -402,11 +408,16 @@ operation resolveContainmentPath(start, propertyMap) : Collection {
 operation ECore!EClass getConcreteSubMappings() : Collection {
 	return self.getConcreteSubtypes()
 		.flatten()
-		.collect(t|t.getMapping())
+		.collect(t|t.getNodeMapping())
 		.select(m|m.isDefined());
 }
 
 @cached
-operation ECore!EClass getMapping() : ODesign!AbstractNodeMapping {
+operation ECore!EClass getNodeMapping() : ODesign!AbstractNodeMapping {
 	return self.equivalent('EClass2ContainerMapping', 'EClass2NodeMapping');
+}
+
+@cached
+operation getDiagramMapping() : ODesign!DiagramDescription {
+	return getDiagramClass().equivalent('EClass2DiagramDescription');
 }
