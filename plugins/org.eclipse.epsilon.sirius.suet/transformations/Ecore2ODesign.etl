@@ -116,13 +116,12 @@ rule EClass2DiagramDescription
 @abstract
 rule EClass2Mapping
 	transform s : ECore!EClass
-	to t : ODesign!diagram::description::DiagramElementMapping {
+	to t : ODesign!diagram::description::AbstractNodeMapping {
 	guard: s.isNode() or s.isLink()
 	
 	// Setup creation constraints
 	t.name := s.name;
 	t.domainClass := s.getDomainClassString();
-	//t.semanticCandidatesExpression := "eol:" + s.getDomainClassString() + ".allOfType";
 	t.semanticCandidatesExpression := "eol:self.eContents";
 	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";
 }
@@ -132,9 +131,6 @@ rule EClass2ContainerMapping
 	to t : ODesign!diagram::description::ContainerMapping
 	extends EClass2Mapping {
 	guard: s.isNode() and s.hasCompartments()
-		
-
-	//getDiagramClass().equivalent().defaultLayer.containerMappings.add(t);
 }
 
 rule EClass2NodeMapping
@@ -162,7 +158,6 @@ rule ElementLink
 	var sourceFeature := s.eStructuralFeatures.selectOne(sf|sf.name = sourceDet);
 	t.sourceMapping.addAll(sourceFeature.eType.getConcreteSubMappings());
 	t.sourceFinderExpression := 'feature:' + sourceDet;
-	
 	
 	var targetDet := ann.getDetail('target');
 	var targetFeature := s.eStructuralFeatures.selectOne(sf|sf.name = targetDet);
@@ -274,6 +269,7 @@ rule EClass2EllipseNodeDescription
 	transform s : ECore!EClass
 	to t : ODesign!EllipseNodeDescription
 	extends EClass2NodeStyleWithColor {
+	// FIXME: Can probably simplify this guard
 	guard: s.getAnnotationValue('gmf.node', 'shape') == 'ellipse' 
 		or s.getAnnotationValue('gmf.node', 'shape') == null
 
@@ -379,7 +375,7 @@ operation ECore!EClass getContainmentPath() : Collection {
 	}
 }
 
-operation ODesign!DiagramElementMapping isMapped() : Boolean {
+operation ODesign!AbstractNodeMapping isMapped() : Boolean {
 	return self.eContainer.isDefined() 
 		and (self.eContainer.isTypeOf(ODesign!Layer) 
 		or self.eContainer.isKindOf(ODesign!ContainerMapping));
@@ -411,6 +407,6 @@ operation ECore!EClass getConcreteSubMappings() : Collection {
 }
 
 @cached
-operation ECore!EClass getMapping() : ODesign!DiagramElementMapping {
+operation ECore!EClass getMapping() : ODesign!AbstractNodeMapping {
 	return self.equivalent('EClass2ContainerMapping', 'EClass2NodeMapping');
 }
