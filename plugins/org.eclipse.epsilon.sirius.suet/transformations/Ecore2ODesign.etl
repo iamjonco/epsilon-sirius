@@ -222,6 +222,12 @@ rule EClass2LabelStyleDescription
 rule EClass2BorderdStyleDescription
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::BorderedStyleDescription {
+	guard: s.isNode()
+	
+	var ann := s.getAnnotation('gmf.node');
+	
+	// Border Width
+	t.borderSizeComputationExpression = ann.getDetail('border.width').ifUndefined('1');
 	
 	// Border Line Style
 	var lineDet := s.getAnnotationValue('gmf.node', 'border.style');
