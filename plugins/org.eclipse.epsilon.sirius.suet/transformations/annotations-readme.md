@@ -4,30 +4,46 @@ Sirius
 * = partial support
 + = new from sirius
 
-sirius.diagram
+gmf.diagram
 --------------
-model.extension: optional defaults to *
+model.extension
+    Extension of model files that can be used. Defaults to wildcard * (any file)
 
-sirius.node
+gmf.node
 ------------------------
-!label
-border.color := rgb value, default is 0,0,0
-border.style := dot, dash, dash_dot, solid:default
-!border.width
-color := rgb, default 211,211,211
-*figure: square, diamond, ellipse - default
+color
+    rgb comma-separated value specifying color of the node background
+figure
+    The shape of the node can be one of: square, diamond, ellipse. Defaults to ellipse
+resizeable
+    Boolean value to set if the node can be resized by user. Defaults to true
+
+label
+    Name of feature to use as the label for this node. This or label.eol must be defined
+label.eol
+    EOL expression to use to define label of this node. This or label must be define
+label.color
+    rgb comma-separated value specifying color of the label text color
+label.placement 
+    Placement of the label. Defaults to internal (in the node). Can be set to external or border
+
+border.style
+    Can be one of: dot, dash, dash_dot or solid. Defaults to solid
+border.color
+    rgb comma-separated value specifying color of the border color
+border.width
+    integer value specifying the width of the
+
 !label.icon
 !label.parser
 !label.pattern
 !label.view.pattern
-*label.placement := internal/node, external/border
 !label.text
 !label.readOnly
 !margin
 !phantom
 !polygon.x
 !polygon.y
-resizeable := true or false -> can be extended to allow only horizontal or vertical resizing
 !size
 !svg.uri
 !tool.description
