@@ -121,7 +121,7 @@ rule EClass2DiagramDescription
  * Sets up constraints to restrict the creation of elements
  */
 @abstract
-rule EClass2Mapping
+rule EClass2AbstractNodeMapping
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::AbstractNodeMapping {
 	guard: s.isNode() or s.isLink()
@@ -136,61 +136,69 @@ rule EClass2Mapping
 rule EClass2ContainerMapping
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::ContainerMapping
-	extends EClass2Mapping {
+	extends EClass2AbstractNodeMapping {
 	guard: s.isNode() and s.hasCompartments()
 }
 
 rule EClass2NodeMapping
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::NodeMapping 
-	extends EClass2Mapping {
+	extends EClass2AbstractNodeMapping {
 	guard: s.isNode() and not s.hasCompartments()
 }
 
-rule ElementLink
+@abstract
+rule ENamedElement2EdgeMapping
+	transform s : ECore!ENamedElement
+	to t : ODesign!diagram::description::EdgeMapping {
+	guard: s.isLink()
+	
+	getDefaultLayer().edgeMappings.add(t);
+}
+	
+rule EClass2EdgeMapping
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::EdgeMapping
-	extends EClass2Mapping {
+	extends ENamedElement2EdgeMapping {
 	guard: s.isLink()
 	
 	var ann := s.getAnnotation('gmf.link');
 	
-	getDiagramMapping().defaultLayer.edgeMappings.add(t);
-	
+	// Relation is represented by a semantic model element/EClass
+	t.name := s.name;
+	t.domainClass := s.getDomainClassString();
+	t.semanticCandidatesExpression := "eol:self.eContents";
+	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";
 	t.useDomainElement := true;
 	
-	// Determine source mappings
+	// Determine Source
 	var sourceDet := ann.getDetail('source');
-	var sourceFeature := s.eStructuralFeatures.selectOne(sf|sf.name = sourceDet);
-	t.sourceMapping.addAll(sourceFeature.eType.getConcreteSubMappings());
+	var sourceFeature := s.eStructuralFeatures.selectOne(esf|esf.name == sourceDet);
+	t.sourceMapping.addAll(sourceFeature.eReferenceType.getConcreteSubMappings());
 	t.sourceFinderExpression := 'feature:' + sourceDet;
 	
+	// Determine Target
 	var targetDet := ann.getDetail('target');
 	var targetFeature := s.eStructuralFeatures.selectOne(sf|sf.name = targetDet);
-	t.targetMapping.addAll(targetFeature.eType.getConcreteSubMappings());
+	t.targetMapping.addAll(targetFeature.eReferenceType.getConcreteSubMappings());
 	t.targetFinderExpression := 'feature:' + targetDet;
-	
-	t.style := new ODesign!EdgeStyleDescription;	
 }
 
-rule RelationLink
+rule EReference2EdgeMapping
 	transform s : ECore!EReference
-	to t : ODesign!diagram::description::EdgeMapping {
+	to t : ODesign!diagram::description::EdgeMapping
+	extends ENamedElement2EdgeMapping {
 	guard: s.isLink()
 	
-	getDiagramMapping().defaultLayer.edgeMappings.add(t);
-	
-	var source := s.eContainingClass.getConcreteSubMappings();
-	var target := s.eReferenceType.getConcreteSubMappings();
-	
-	t.name := source.name + '2' + target.name;
+	t.name := s.eContainingClass.name + '2' + s.eReferenceType.name;
 	t.useDomainElement := false;
-	// TODO: account for subtypes as well
-	t.sourceMapping.addAll(source);
-	t.targetMapping.addAll(target);
 	t.targetFinderExpression := 'feature:' + s.name;
 	
-	t.style := new ODesign!EdgeStyleDescription;
+	var sourceMappings := s.eContainingClass.getConcreteSubMappings();
+	t.sourceMapping.addAll(sourceMappings);
+	
+	var targetMappings := s.eReferenceType.getConcreteSubMappings();
+	t.targetMapping.addAll(targetMappings);	
 }
 
 /**
@@ -202,7 +210,6 @@ rule RelationLink
 rule EClass2LabelStyleDescription
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::LabelStyleDescription {
-	guard: s.isNode()
 	
 	t.labelExpression := s.getLabelExpression();
 	
@@ -215,7 +222,6 @@ rule EClass2LabelStyleDescription
 rule EClass2BorderdStyleDescription
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::BorderedStyleDescription {
-	guard: s.isNode()
 	
 	// Border Line Style
 	var lineDet := s.getAnnotationValue('gmf.node', 'border.style');
@@ -290,6 +296,27 @@ rule EClass2FlatContainerStyleDescription
 	guard: s.isNode() and s.hasCompartments()
 	
 	s.equivalent('EClass2ContainerMapping').style := t;
+}
+
+@abstract
+rule ENamedElement2EdgeStyleDescription
+	transform s : ECore!ENamedElement
+	to t : ODesign!diagram::description::style::EdgeStyleDescription {
+	guard: s.isLink()
+	
+	s.equivalent('EClass2EdgeMapping', 'EReference2EdgeMapping').style := t;
+}
+
+rule EClass2EdgeStyleDescription 
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::style::EdgeStyleDescription
+	extends ENamedElement2EdgeStyleDescription {
+}
+
+rule EReference2EdgeStyleDescription 
+	transform s : ECore!EReference
+	to t : ODesign!diagram::description::style::EdgeStyleDescription
+	extends ENamedElement2EdgeStyleDescription {
 }
 
 /**
@@ -381,6 +408,7 @@ operation ECore!EClass getContainmentPath() : Collection {
 	}
 }
 
+// DO NOT CACHE
 operation ODesign!AbstractNodeMapping isMapped() : Boolean {
 	return self.eContainer.isDefined() 
 		and (self.eContainer.isTypeOf(ODesign!Layer) 
@@ -413,6 +441,11 @@ operation ECore!EClass getConcreteSubMappings() : Collection {
 }
 
 @cached
+operation ECore!EReference getConcreteSubMappings() : Collection {
+	return self.eReferenceType.getConcreteSubMappings();
+}
+
+@cached
 operation ECore!EClass getNodeMapping() : ODesign!AbstractNodeMapping {
 	return self.equivalent('EClass2ContainerMapping', 'EClass2NodeMapping');
 }
@@ -420,4 +453,9 @@ operation ECore!EClass getNodeMapping() : ODesign!AbstractNodeMapping {
 @cached
 operation getDiagramMapping() : ODesign!DiagramDescription {
 	return getDiagramClass().equivalent('EClass2DiagramDescription');
+}
+
+@cached
+operation getDefaultLayer() : ODesign!Layer {
+	return getDiagramMapping().defaultLayer;
 }
