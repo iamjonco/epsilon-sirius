@@ -26,15 +26,15 @@ pre {
 	
 	var DEFAULT_COLOR : ODesign!viewpoint::description::UserFixedColor :=
 		newColor('DEFAULT_COLOR', 211, 211, 211);
-	var DEFAULT_LINE_COLOR : ODesign!viewpoint::description::UserFixedColor :=
-		newColor('DEFAULT_LINE', 0, 0, 0);
+	var DEFAULT_EDGE_COLOR : ODesign!viewpoint::description::UserFixedColor :=
+		newColor('DEFAULT_EDGE_COLOR', 0, 0, 0);
 	var DEFAULT_BORDER_COLOR : ODesign!viewpoint::description::UserFixedColor :=
 		newColor('DEFAULT_BORDER', 0, 0, 0);
 	var DEFAULT_LABEL_COLOR : ODesign!viewpoint::description::UserFixedColor :=
 		newColor('DEFAULT_LABEL', 0, 0, 0);
-
+		
 	DEFAULT_PALETTE.entries.add(DEFAULT_COLOR);
-	DEFAULT_PALETTE.entries.add(DEFAULT_LINE_COLOR);
+	DEFAULT_PALETTE.entries.add(DEFAULT_EDGE_COLOR);
 	DEFAULT_PALETTE.entries.add(DEFAULT_BORDER_COLOR);
 	DEFAULT_PALETTE.entries.add(DEFAULT_LABEL_COLOR);
 }
@@ -64,7 +64,9 @@ post {
 	// Assign container mappings
 	for (class in ECore!EClass) {
 		var topMapping := class.getNodeMapping();
-		if (topMapping.isUndefined()) continue; // FIXME: Current gets the diagram class too
+		if (topMapping.isUndefined() 
+			or not topMapping.isKindOf(ODesign!ContainerMapping)) 
+				continue;
 	
 		var subMappings := class
 			.getEAllContainments()
@@ -124,7 +126,7 @@ rule EClass2DiagramDescription
 rule EClass2AbstractNodeMapping
 	transform s : ECore!EClass
 	to t : ODesign!diagram::description::AbstractNodeMapping {
-	guard: s.isNode() or s.isLink()
+	guard: s.isNode()
 	
 	// Setup creation constraints
 	t.name := s.name;
@@ -325,6 +327,17 @@ rule ENamedElement2EdgeStyleDescription
 	transform s : ECore!ENamedElement
 	to t : ODesign!diagram::description::style::EdgeStyleDescription {
 	guard: s.isLink()
+	
+	var ann := s.getAnnotation('gmf.link');
+	
+	// Line color
+	var colorDet := ann.getDetail('color');
+	if (colorDet.isDefined()) t.strokeColor := newColor(s.name + '_EDGE_COLOR', colorDet);
+	else t.strokeColor := DEFAULT_EDGE_COLOR;
+	
+	// Line width
+	t.sizeComputationExpression = ann.getDetail('width').ifUndefined('1');
+	// TODO: Original value was [eContents()->size()/]? Why is this
 	
 	s.equivalent('EClass2EdgeMapping', 'EReference2EdgeMapping').style := t;
 }
