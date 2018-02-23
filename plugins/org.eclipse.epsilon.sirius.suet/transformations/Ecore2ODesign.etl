@@ -246,6 +246,22 @@ rule EClass2NodeStyleDescription
 	extends EClass2LabelStyleDescription, EClass2BorderdStyleDescription {
 	guard: s.isNode() and not s.hasCompartments()
 	
+	var ann := s.getAnnotation('gmf.node');
+	
+	// Label positioning
+	var labelPlacementDet := ann.getDetail('label.placement');
+	if (labelPlacementDet == 'bordered' or labelPlacementDet == 'external')
+		t.labelPosition := ODesign!diagram::LabelPosition#border;
+	else
+		t.labelPosition := ODesign!diagram::LabelPosition#node;
+	
+	// Resizeable
+	var resizeableDet := ann.getDetail('resizeable');
+	if (resizeableDet == 'false') 
+		t.resizeKind := ODesign!diagram::ResizeKind#NONE;
+	else 
+		t.resizeKind := ODesign!diagram::ResizeKind#NSEW;
+
 	s.equivalent('EClass2NodeMapping').style := t;
 }
 

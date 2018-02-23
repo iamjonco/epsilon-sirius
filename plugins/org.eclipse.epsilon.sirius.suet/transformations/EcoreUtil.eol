@@ -114,19 +114,6 @@ operation ECore!EClass getLabelExpression() : Any {
 	return 'feature:name'; // FIXME: Original EOL required a label detail
 }
 
-// FIXME: not used currently
-@cached
-operation ECore!EClass getLabelPlacement() : Any {
-	var ann : String;
-	if (self.isNode()) ann := 'gmf.node';
-	else ann := 'gmf.link';
-
-	var labelPlacement := self.getAnnotationValue(ann, 'label.placement');
-	if (labelPlacement = "bordered" or labelPlacement = "external")
-		return ODesign!diagram::LabelPosition#border;
-	return ODesign!diagram::LabelPosition#node;
-}
-
 @cached
 operation getDiagramClass() : ECore!EClass {
 	return ECore!EClass.all.selectOne(c|c.isAnnotatedAs('gmf.diagram'));
