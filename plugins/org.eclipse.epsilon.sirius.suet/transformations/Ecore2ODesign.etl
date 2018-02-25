@@ -393,7 +393,7 @@ rule NodeTool
 	contextOp.browseExpression := "eol:self";
 	var i = path.size() - 1;
 	while (i > 0) {
-		contextOp.browseExpression += ',' + path[i];
+		contextOp.browseExpression += '.' + path[i];
 		i := i - 1;
 	}
 		
@@ -438,13 +438,6 @@ operation ECore!EClass getContainmentPath() : Collection {
 	}
 }
 
-// DO NOT CACHE
-operation ODesign!AbstractNodeMapping isMapped() : Boolean {
-	return self.eContainer.isDefined() 
-		and (self.eContainer.isTypeOf(ODesign!Layer) 
-		or self.eContainer.isKindOf(ODesign!ContainerMapping));
-}
-
 operation resolveContainmentPath(start, propertyMap) : Collection {
 	var path := new Sequence;
 	var eType := start;	
@@ -460,6 +453,13 @@ operation resolveContainmentPath(start, propertyMap) : Collection {
 		}
 	}
 	return path;
+}
+
+// DO NOT CACHE
+operation ODesign!AbstractNodeMapping isMapped() : Boolean {
+	return self.eContainer.isDefined() 
+		and (self.eContainer.isTypeOf(ODesign!Layer) 
+		or self.eContainer.isKindOf(ODesign!ContainerMapping));
 }
 
 @cached
