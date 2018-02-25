@@ -5,12 +5,17 @@ Sirius
 + = new from sirius
 
 gmf.diagram
---------------
+-----------
 model.extension
     Extension of model files that can be used. Defaults to wildcard * (any file)
+    
+!diagram.extension
+!onefile
+!rcp
+!units
 
 gmf.node
-------------------------
+--------
 color
     rgb comma-separated value specifying color of the node background
 figure
@@ -51,5 +56,55 @@ border.width
 !tool.large.path
 !tool.name
 !tool.small.bundle
+!tool.small.path
+!label.hidden
+
+gmf.link (for EClass)
+---------------------
+color
+source
+source.decoration
+style
+target
+target.decoration
+
+width
+
+!label
+!label.parser
+!label.text
+!target.constraint
+!incoming
+!tool.description
+!tool.large.bundle
+!tool.large.path
+!tool.name
+!tool.small.bundle
 !tool.small.path:
-!+label.hidden := default false, hides label (can be toggled in editor)
+
+gmf.link (for non-containment EReference)
+-----------------------------------------
+color
+source.decoration
+style
+target.decoration
+
+!label
+!label.text
+!tool.description
+!tool.large.bundle
+!tool.large.path
+!tool.name
+!tool.small.bundle
+!tool.small.path
+
+gmf.compartment (for containment EReference)
+--------------------------------------------
+!collapsible
+!layout
+
+gmf.affixed
+-----------
+
+gmf.label
+---------

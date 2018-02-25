@@ -1,3 +1,22 @@
+/**
+ * ============================================================================
+ * ECORE UTIL
+ * ============================================================================
+ *
+ * Helper operations for ECore models annotated with diagram generation 
+ * annotations.
+ *
+ * Following metamodels are required.
+ * ECore
+ * 
+ * ============================================================================
+ */
+ 
+/**
+ * ----------------------------------------------------------------------------
+ * ANNOTATIONS - GENERAL
+ * ----------------------------------------------------------------------------
+ */
 operation ECore!EModelElement getAnnotation(name : String) : ECore!EAnnotation {
 	var ann := self.eAnnotations.selectOne(a|a.source = name);
 	
@@ -9,7 +28,6 @@ operation ECore!EModelElement getAnnotation(name : String) : ECore!EAnnotation {
 	}
 	
 	return ann;
-	
 }
 
 operation ECore!EModelElement getAnnotationValue(name : String, detail : String) : Any {
@@ -40,15 +58,15 @@ operation ECore!EAnnotation getDetail(key : String) : String {
 	else {return null;}
 }
 
-@cached
-operation ECore!EClass getDomainClassString() : String {
-	return self.ePackage.name + '::' + self.name;
-}
-
 operation ECore!EModelElement isAnnotatedAs(name : String) : Boolean {
 	return self.getAnnotation(name).isDefined();
 }
 
+/**
+ * ----------------------------------------------------------------------------
+ * ANNOTATIONS - GMF SPECIFIC
+ * ----------------------------------------------------------------------------
+ */
 @cached
 operation ECore!EReference isLink() : Boolean {
 	return self.isAnnotatedAs('gmf.link');
@@ -89,6 +107,11 @@ operation ECore!EClass getNodeAnn() : ECore!EAnnotation {
 }
 
 @cached
+operation EClass!ENamedElement getLinkAnn() : ECore!EAnnotation {
+	return self.getAnnotation('gmf.link');
+}
+
+@cached
 operation ECore!EClass getCompartmentReferences() : Collection {
 	return self.getContainmentReferences().select(r|r.isAnnotatedAs('gmf.compartment'));
 }
@@ -99,6 +122,7 @@ operation ECore!EClass isPhantom() : Boolean {
 	return self.getDetail("phantom").ifUndefined(false).asBoolean();
 }
 
+// TODO: Account for other types of label expression
 @cached
 operation ECore!EClass getLabelExpression() : Any {
 	var ann : String;

@@ -164,7 +164,7 @@ rule EClass2EdgeMapping
 	extends ENamedElement2EdgeMapping {
 	guard: s.isLink()
 	
-	var ann := s.getAnnotation('gmf.link');
+	var ann := s.getLinkAnn();
 	
 	// Relation is represented by a semantic model element/EClass
 	t.name := s.name;
@@ -226,20 +226,14 @@ rule EClass2BorderdStyleDescription
 	to t : ODesign!diagram::description::BorderedStyleDescription {
 	guard: s.isNode()
 	
-	var ann := s.getAnnotation('gmf.node');
+	var ann := s.getNodeAnn();
 	
 	// Border Width
 	t.borderSizeComputationExpression = ann.getDetail('border.width').ifUndefined('1');
 	
 	// Border Line Style
-	var lineDet := s.getAnnotationValue('gmf.node', 'border.style');
-	var line : Any;
-	switch (lineDet) {
-		case 'dot': t.borderLineStyle := ODesign!diagram::LineStyle#dot;
-		case 'dash': t.borderLineStyle := ODesign!diagram::LineStyle#dash;
-		case 'dash_dot': t.borderLineStyle := ODesign!diagram::LineStyle#dash_dot;
-		default: t.borderLineStyle := ODesign!diagram::LineStyle#solid;
-	}
+	var borderStyleDet := ann.getDetail('border.style');
+	t.borderLineStyle := getLineStyle(borderStyleDet);
 	
 	// Border Color
 	var colorDet := s.getAnnotationValue('gmf.node', 'border.color');
@@ -254,7 +248,7 @@ rule EClass2NodeStyleDescription
 	extends EClass2LabelStyleDescription, EClass2BorderdStyleDescription {
 	guard: s.isNode() and not s.hasCompartments()
 	
-	var ann := s.getAnnotation('gmf.node');
+	var ann := s.getNodeAnn();
 	
 	// Label positioning
 	var labelPlacementDet := ann.getDetail('label.placement');
@@ -328,16 +322,17 @@ rule ENamedElement2EdgeStyleDescription
 	to t : ODesign!diagram::description::style::EdgeStyleDescription {
 	guard: s.isLink()
 	
-	var ann := s.getAnnotation('gmf.link');
+	var ann := s.getLinkAnn();
 	
-	// Line color
+	// Line properties
 	var colorDet := ann.getDetail('color');
 	if (colorDet.isDefined()) t.strokeColor := newColor(s.name + '_EDGE_COLOR', colorDet);
 	else t.strokeColor := DEFAULT_EDGE_COLOR;
 	
-	// Line width
-	t.sizeComputationExpression = ann.getDetail('width').ifUndefined('1');
-	// TODO: Original value was [eContents()->size()/]? Why is this
+	t.sizeComputationExpression = ann.getDetail('width').ifUndefined('1'); 	// TODO: Original value was [eContents()->size()/]? Why is this
+	t.lineStyle := getLineStyle(ann.getDetail('style'));
+	t.sourceArrow := getEdgeDecoration(ann.getDetail('source.decoration'));
+	t.targetArrow := getEdgeDecoration(ann.getDetail('target.decoration'));
 	
 	s.equivalent('EClass2EdgeMapping', 'EReference2EdgeMapping').style := t;
 }
@@ -365,7 +360,7 @@ rule NodeTool
 	to t : ODesign!NodeCreationDescription {
 	guard: s.isNode() and s.getCompartmentReferences().isEmpty()
 	
-	var ann := s.getAnnotation('gmf.node');
+	var ann := s.getNodeAnn();
 
 	// Get the tool section
 	var toolSection := getDiagramMapping().defaultLayer.toolSections
@@ -493,4 +488,9 @@ operation getDiagramMapping() : ODesign!DiagramDescription {
 @cached
 operation getDefaultLayer() : ODesign!Layer {
 	return getDiagramMapping().defaultLayer;
+}
+
+@cached
+operation ECore!EClass getDomainClassString() : String {
+	return self.ePackage.name + '::' + self.name;
 }

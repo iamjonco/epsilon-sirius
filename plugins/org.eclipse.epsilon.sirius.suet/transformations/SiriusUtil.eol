@@ -1,5 +1,23 @@
 /**
- * TOOLS ----------------------------------------------------------------------
+ * ============================================================================
+ * SIRIUS UTIL
+ * ============================================================================
+ *
+ * Helper operations for use with Sirius Description and Diagram specific model 
+ * elements.
+ *
+ * Following metamodels are required and are grouped under the ODesign
+ * EOL model name identifer. NOTE that at time of commit metamodels contain 
+ * sub-epackages that are also referenced. In future these may be moved out 
+ * into separate metamodels:
+ * Viewpoint Description: http://www.eclipse.org/sirius/description/1.1.0
+ * Diagram Description: http://www.eclipse.org/sirius/diagram/description/1.1.0
+ */
+
+/**
+ * ----------------------------------------------------------------------------
+ * TOOLS 
+ * ----------------------------------------------------------------------------
  */
 operation ODesign!diagram::description::Layer getToolSection(name : String) 
 		: ODesign!diagram::description::tool::ToolSection {
@@ -19,7 +37,9 @@ operation ODesign!diagram::description::Layer getToolSection()
 }
 
 /**
- * COLORS ---------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
+ * COLORS 
+ * ----------------------------------------------------------------------------
  */
 operation newColor(name : String, red : Integer, green : Integer, blue : Integer) 
 		: ODesign!viewpoint::description::UserFixedColor {
@@ -39,4 +59,26 @@ operation newColor(name : String, rgb : String)
 operation ODesign!viewpoint::description::UserColorsPalette getColor(name : String)
 		: ODesign!viewpoint::description::UserFixedColor {
 	return self.entries.selectOne(c|c.name = name);
+}
+
+operation getEdgeDecoration(decoration : String) : Any {
+	switch(decoration) {
+		case 'arrow': return ODesign!diagram::EdgeArrows#InputArrow;
+		case 'rhomb': return ODesign!diagram::EdgeArrows#Diamond;
+		case 'filledrhomb': return ODesign!diagram::EdgeArrows#FillDiamond;
+		case 'square': return ODesign!diagram::EdgeArrows#Diamond; // TODO: Closest match
+		case 'filledsquare': return ODesign!diagram::EdgeArrows#FillDiamond; // TODO: Closest match
+		case 'closedarrow': return ODesign!diagram::EdgeArrows#InputClosedArrow;
+		case 'filledclosedarrow': return ODesign!diagram::EdgeArrows#InputFillClosedArrow;
+		default: return ODesign!diagram::EdgeArrows#NoDecoration;
+	}
+}
+
+operation getLineStyle(lineStyle : String) : Any {
+	switch (lineStyle) {
+		case 'dot': return ODesign!diagram::LineStyle#dot;
+		case 'dash': return ODesign!diagram::LineStyle#dash;
+		case 'dash_dot': return ODesign!diagram::LineStyle#dash_dot;
+		default: return ODesign!diagram::LineStyle#solid;
+	}
 }
