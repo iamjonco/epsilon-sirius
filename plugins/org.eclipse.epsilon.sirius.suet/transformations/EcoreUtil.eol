@@ -107,7 +107,7 @@ operation ECore!EClass getNodeAnn() : ECore!EAnnotation {
 }
 
 @cached
-operation EClass!ENamedElement getLinkAnn() : ECore!EAnnotation {
+operation ECore!ENamedElement getLinkAnn() : ECore!EAnnotation {
 	return self.getAnnotation('gmf.link');
 }
 
