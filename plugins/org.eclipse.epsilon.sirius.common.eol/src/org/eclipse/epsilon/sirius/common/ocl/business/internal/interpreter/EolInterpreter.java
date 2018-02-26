@@ -206,19 +206,20 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 				
 				InMemoryEmfModel model;
 				if (e.getValue() instanceof EObject) {
-					Resource res = ((EObject) e.getValue()).eResource();
+					final Resource res = ((EObject) e.getValue()).eResource();
 					model = models.get(res);
 										
 					// Model does not exist, create it and store
 					if (model == null && res != null) {
 						model = new InMemoryEmfModel(res);
 						models.put(res, model);
-						context.getModelRepository().addModel(model);
+						model.setName(res.getURI().lastSegment());
+						context.getModelRepository().addModel(model);						
 					}
 					
 					if (model != null) {
 						final String typeName = model.getTypeNameOf(e.getValue());
-						final EolType eolType = new EolModelElementType(typeName, context);
+						final EolType eolType = new EolModelElementType(model.getName() + "!" + typeName, context);
 						final Variable variable = new Variable(e.getKey(), e.getValue(), eolType);
 						context.getFrameStack().putGlobal(variable);
 					}
