@@ -90,6 +90,7 @@ operation ECore!EClass isLink() : Boolean {
 operation ECore!EClass isNode() : Boolean {
 	if (self.isLink()) return false;
 	if (self.abstract) return false;
+	if (self == getDiagramClass()) return false;
 	
 	var isNode := self.isAnnotatedAs('gmf.node');
 	var isNoNode := self.isAnnotatedAs('gmf.nonode');
