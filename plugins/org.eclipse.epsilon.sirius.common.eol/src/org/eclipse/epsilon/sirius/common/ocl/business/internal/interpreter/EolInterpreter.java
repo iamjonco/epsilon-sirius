@@ -194,13 +194,13 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 			context.getModelRepository().addModel(semanticModel);
 			
 			// FIXME: isKindOf expressions not working correctly -> isTypeOf works correctly
-			final String targetTypeName = semanticModel.getTypeNameOf(target);
-			context.getFrameStack().putGlobal(
-				new Variable(
-						"sirius_target", 
-						target, 
-						new EolModelElementType(targetTypeName, context)
-			));
+//			final String targetTypeName = "Model!" + semanticModel.getTypeNameOf(target);
+//			context.getFrameStack().putGlobal(
+//				new Variable(
+//						"sirius_target", 
+//						target, 
+//						new EolModelElementType(targetTypeName, context)
+//			));
 			
 			// Setup Variables Models
 			for (Entry<String, ?> e : this.getVariables().entrySet()) {
