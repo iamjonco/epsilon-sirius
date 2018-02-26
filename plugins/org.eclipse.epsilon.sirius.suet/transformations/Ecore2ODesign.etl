@@ -12,16 +12,36 @@ pre {
 	
 	// TODO: Handle multiple Viewpoints
 	var topViewpoint : new ODesign!viewpoint::description::Viewpoint;
+	topGroup.ownedViewpoints.add(topViewpoint);
 	topViewpoint.name := getDiagramClass().name;
 	topViewpoint.modelFileExtension := 
 		getDiagramClass().getAnnotationValue('gmf.diagram','model.extension').ifUndefined('*');
-	topGroup.ownedViewpoints.add(topViewpoint);
+	
+	var diagramMapping := new ODesign!diagram::description::DiagramDescription;
+	topViewpoint.ownedRepresentations.add(diagramMapping);
+	diagramMapping.name := getDiagramClass()
+		.getAnnotationValue('gmf.diagram', 'label')
+		.ifUndefined('Diagram');
+	diagramMapping.domainClass := getDiagramClass().getDomainClassString();
+	diagramMapping.metamodel.add(getDiagramClass().ePackage);
+	
+	// TODO: handle additional layering
+	diagramMapping.defaultLayer := new ODesign!diagram::description::Layer;
+	diagramMapping.defaultLayer.name := 'Default';
+	
+	// Setup Default Tool Palettes
+	var NODE_TOOLS := new ODesign!diagram::description::tool::ToolSection;
+	NODE_TOOLS.name := 'Nodes';
+	var EDGE_TOOLS := new ODesign!diagram::description::tool::ToolSection;
+	EDGE_TOOLS.name := 'Links';
+	
+	getDefaultLayer().toolSections.add(NODE_TOOLS);
+	getDefaultLayer().toolSections.add(EDGE_TOOLS);
 	
 	// Setup Default Colors
 	var DEFAULT_PALETTE : ODesign!viewpoint::description::UserColorsPalette := 
 		new ODesign!UserColorsPalette;
 	DEFAULT_PALETTE.name := 'Default';
-		
 	topGroup.userColorsPalettes.add(DEFAULT_PALETTE);
 	
 	var DEFAULT_COLOR : ODesign!viewpoint::description::UserFixedColor :=
@@ -98,17 +118,7 @@ rule EClass2DiagramDescription
 	to t : ODesign!diagram::description::DiagramDescription {
 	guard: s.isAnnotatedAs('gmf.diagram')
 	
-	topViewpoint.ownedRepresentations.add(t);
-	
-	t.name := s.getAnnotationValue('gmf.diagram', 'label').ifUndefined('Diagram');
-	t.domainClass = s.getDomainClassString();
-	t.metamodel.add(s.ePackage);
-	
-	// Setup Layers
-	// TODO: handle additional layering
-	var layer := new ODesign!Layer;
-	layer.name := 'Default';
-	t.defaultLayer := layer;
+
 }
 
 /**
@@ -354,53 +364,77 @@ rule EReference2EdgeStyleDescription
  * TOOLS
  * ============================================================================
  */
- 
-rule NodeTool 
+
+@abstract
+rule AbstractNodeCreateTool
 	transform s : ECore!EClass
-	to t : ODesign!NodeCreationDescription {
-	guard: s.isNode() and s.getCompartmentReferences().isEmpty()
+	to t : ODesign!diagram::description::tool::MappingBasedToolDescription {
+	guard: s.isNode()
 	
 	var ann := s.getNodeAnn();
-
-	// Get the tool section
-	var toolSection := getDiagramMapping().defaultLayer.toolSections
-		.selectOne(t|t.name = 'Node');
-	if (toolSection.isUndefined()) {
-		toolSection := new ODesign!ToolSection;
-		toolSection.name := 'Node';
-		getDiagramMapping().defaultLayer.toolSections.add(toolSection);
-	}
-	toolSection.ownedTools.add(t);
 	
-	// Initialise mappings
-	t.nodeMappings.add(s.equivalents().selectOne(n|n.isTypeOf(ODesign!NodeMapping)));
-		
-	// Initialise default container variables
+	// Initialise default variables
 	t.name := s.name;
 	t.variable := new ODesign!NodeCreationVariable;
 	t.variable.name := "container";
 	t.viewVariable := new ODesign!ContainerViewVariable;
 	t.viewVariable.name := "containerView";
 	
-	// Build the operation
-	var path := s.getContainmentPath();
+	NODE_TOOLS.ownedTools.add(t);
+}
 
-	var rootOp := new ODesign!InitialNodeCreationOperation;
-	t.initialOperation := rootOp;
-
-	var contextOp := new ODesign!ChangeContext;
-	rootOp.firstModelOperations := contextOp;
-	contextOp.browseExpression := "eol:self";
-	var i = path.size() - 1;
-	while (i > 0) {
-		contextOp.browseExpression += '.' + path[i];
-		i := i - 1;
+rule CreateNodeTool
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::tool::NodeCreationDescription
+	extends AbstractNodeCreateTool {
+	guard: not s.hasCompartments() and s.getContainmentPath() <> null
+	
+	t.nodeMappings.add(s.equivalent('EClass2NodeMapping'));
+	
+	// Build Operation
+	var initialOp := new ODesign!InitialNodeCreationOperation;
+	t.initialOperation := initialOp;
+	
+	var containmentPath := s.getContainmentPath();
+	var exp := "eol:self";
+	for (ref : ECore!EReference in s.getContainmentPath()) {
+		exp += '.' + ref.name;
 	}
-		
+	var contextOp := new ODesign!ChangeContext;
+	initialOp.firstModelOperations := contextOp;
+	contextOp.browseExpression := exp;
+	
 	var createOp := new ODesign!CreateInstance;
 	contextOp.subModelOperations.add(createOp);
 	createOp.typeName := s.getDomainClassString();
-	createOp.referenceName := path[0];	
+	createOp.referenceName := containmentPath.last().name;
+}
+
+rule CreateContainerTool
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::tool::ContainerCreationDescription
+	extends AbstractNodeCreateTool {
+	guard: s.hasCompartments() and s.getContainmentPath() <> null
+	
+	t.containerMappings.add(s.equivalent('EClass2ContainerMapping'));
+	
+	// Build Operation
+	var initialOp := new ODesign!InitialNodeCreationOperation;
+	t.initialOperation := initialOp;
+	
+	var containmentPath := s.getContainmentPath();
+	var exp := "eol:self";
+	for (ref : ECore!EReference in s.getContainmentPath()) {
+		exp += '.' + ref.name;
+	}
+	var contextOp := new ODesign!ChangeContext;
+	initialOp.firstModelOperations := contextOp;
+	contextOp.browseExpression := exp;
+	
+	var createOp := new ODesign!CreateInstance;
+	contextOp.subModelOperations.add(createOp);
+	createOp.typeName := s.getDomainClassString();
+	createOp.referenceName := containmentPath.last().name;
 }
 
 /**
@@ -411,28 +445,47 @@ rule NodeTool
 
 @cached
 operation ECore!EClass getContainmentPath() : Collection {
-	var toVisit := new Sequence;
-	var visited := new Set;
-	var propertyMap := new Map;
-	toVisit.add(getDiagramClass());
+	var toVisit := new Sequence; // EClasses left to visit
+	var visited := new Set; // EClasses already visited
+	var propertyMap := new Map; // Map of EClass A to {EClass B, EReference to EClass B} 
+	
+	toVisit.add(getDiagramClass()); //Start from root diagram element
 	propertyMap.put(getDiagramClass(), null);
 	
 	while (toVisit.notEmpty()) {
-		var current := toVisit.first();
-		visited.add(current);
-		toVisit.remove(current);
+		var visiting := toVisit.first();
+		var refs := visiting.getContainmentReferences();
+		visited.add(visiting);
+		toVisit.remove(visiting);
 		
-		var refs := current.getContainmentReferences();
 		for (r in refs) {
-			var property := Sequence{current, r};
-			propertyMap.put(r.eType, property);
+			var property := Sequence{visiting, r};
+			var rType := r.eType;
+			propertyMap.put(rType, property);
 			
-			if (self.eAllSuperTypes.includes(r.eType) or self = r.eType) {
-				return resolveContainmentPath(r.eType, propertyMap);
+			// Found reference to containment with correct type
+			// Loop and return the path sequence in order
+			if (self.eAllSuperTypes.includes(rType) or self = rType) {
+				var finished := false;
+				var path := new Sequence;
+				var pathType := rType;
+				
+				while (not finished) {
+					var segment := propertyMap.get(pathType);
+					if (segment <> null) {
+						path.add(segment.second());
+						pathType := segment.first();
+					} else {
+						finished := true;
+					}
+				}
+			
+				return path.invert();
 			}
 		
-			if (visited.excludes(r.eType)) {
-				toVisit.add(r.eType);
+			// Did not find, add ERefs EClass to search if not previously searched
+			if (visited.excludes(rType)) {
+				toVisit.add(rType);
 			}
 		}
 	}
@@ -482,7 +535,7 @@ operation ECore!EClass getNodeMapping() : ODesign!AbstractNodeMapping {
 
 @cached
 operation getDiagramMapping() : ODesign!DiagramDescription {
-	return getDiagramClass().equivalent('EClass2DiagramDescription');
+	return diagramMapping;
 }
 
 @cached
