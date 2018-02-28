@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.sirius.common.ocl.business.internal.interpreter;
+package org.eclipse.epsilon.sirius.common.eol.business.internal.interpreter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -175,7 +175,7 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 
 	@Override
 	public Object evaluate(EObject target, String expression) throws EvaluationException {
-		// Initial checks
+		// Initial checks	
 		if (expression.trim().equals(EolInterpreter.EOL_PREFIX)) return null;
 		this.setVariable("self", target);
 		
@@ -217,12 +217,11 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 				}
 			}
 			
-			final String eol = String.format("return %s;", expression.substring(EolInterpreter.EOL_PREFIX.length()));
+			final String eol = expression.substring(EolInterpreter.EOL_PREFIX.length());
 			module.parse(eol);
 			if (module.getParseProblems().size() > 0) {
 				throw new EolEvaluatorException(module.getParseProblems());
 			}
-			
 			result = module.execute();
 			
 		} catch(Exception e) {
@@ -231,7 +230,6 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 		} finally {
 			if (context != null) context.dispose();
 		}
-		
 		return result;
 	}
 

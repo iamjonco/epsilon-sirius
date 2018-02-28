@@ -135,8 +135,8 @@ rule EClass2AbstractNodeMapping
 	// Setup creation constraints
 	t.name := s.name;
 	t.domainClass := s.getDomainClassString();
-	t.semanticCandidatesExpression := "eol:self.eContents";
-	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";
+	t.semanticCandidatesExpression := "eol:return self.eContents;";
+	t.preconditionExpression := "eol:return self.isTypeOf(Model!" + s.getDomainClassString() + ");";
 }
 
 rule EClass2ContainerMapping
@@ -173,8 +173,8 @@ rule EClass2EdgeMapping
 	// Relation is represented by a semantic model element/EClass
 	t.name := s.name;
 	t.domainClass := s.getDomainClassString();
-	t.semanticCandidatesExpression := "eol:self.eContents";
-	t.preconditionExpression := "eol:self.isTypeOf(Model!" + s.getDomainClassString() + ")";
+	t.semanticCandidatesExpression := "eol:return self.eContents;";
+	t.preconditionExpression := "eol:return self.isTypeOf(Model!" + s.getDomainClassString() + ");";
 	t.useDomainElement := true;
 	
 	// Determine Source
@@ -375,13 +375,11 @@ rule AbstractNodeCreateTool
 	t.viewVariable.name := "containerView";
 	
 	// Build pre-condition expression
-	t.precondition := "eol:container.eClass.eAllStructuralFeatures" +
-		".exists(er : Model!EReference | er.containment and " +
-		"('%s' == er.eType.name or" +
-		"Model!EClass.all.selectOne(ec|ec.name=='%s')" +
-		".eAllSuperTypes.exists(st|st.name == er.eType.name)))"
-		.replace('%s', s.name);
-	
+	t.precondition := "eol:var clazz = Model!EClass.all.selectOne(ec|ec.name=='"+s.name+"');"
+	+ "var containments = container.eClass.eAllStructuralFeatures.select(sf|sf.containment);"
+	+ "return containments.exists(ref|clazz.eAllSuperTypes.collect(st|st.name).includes(ref.eType.name) "
+	+ "or clazz.name == ref.eType.name);";
+
 	// Build Operation
 	var initialOp := new ODesign!InitialNodeCreationOperation;
 	t.initialOperation := initialOp;
@@ -389,7 +387,7 @@ rule AbstractNodeCreateTool
 	// Select the container to place new container in
 	var contextOp := new ODesign!ChangeContext;
 	t.initialOperation.firstModelOperations := contextOp;
-	contextOp.browseExpression := 'eol:container';
+	contextOp.browseExpression := 'eol:return container;';
 	
 	// Figure out what type of container and feature to place into
 	var containments = s.getAllSuitableContainmentReferences();
@@ -400,35 +398,30 @@ rule AbstractNodeCreateTool
 	} 
 	
 	// More than one possible containment, add filters for desired container
+	// TODO: probably can streamline this using ofKind relationships
 	else {
 		var switchOp := new ODesign!Switch;
 		contextOp.subModelOperations.add(switchOp);
 		
-		var i = containments.size() -1;
-		
-		while (i > 0) {
-			var current = containments.at(i);
-			var caseOp = new ODesign!Case;
-			var createOp = new ODesign!CreateInstance;
-			
-			switchOp.cases.add(caseOp);
-			caseOp.subModelOperations.add(createOp);
-			caseOp.conditionExpression := 'eol:container.isTypeOf(Model!' 
-				+ current.eContainingClass.name + ')';
-			createOp.referenceName := current.name;
+		for (ref : ECore!EReference in containments) {
+			var switchChild : ODesign!SwitchChild;
+			var createOp := new ODesign!CreateInstance;
+			createOp.referenceName := ref.name;
 			createOp.typeName := s.getDomainClassString();
 			createOp.variableName := 'instance';
 			
-			i = i-1;
+			if (hasMore) {
+				switchChild := new ODesign!Case;
+				switchChild.conditionExpression :=
+					"eol:return container.isTypeOf(Model!" + ref.eContainingClass.name + ");";
+				switchOp.cases.add(switchChild);
+			} else {
+				switchChild := new ODesign!Default;
+				switchOp.`default` := switchChild;
+			}
+			
+			switchChild.subModelOperations.add(createOp);
 		}
-	
-		var defaultRef := containments.last();
-		var defaultCreateOp := new ODesign!CreateInstance;
-		switchOp.`default` := new ODesign!Default;
-		switchOp.`default`.subModelOperations.add(defaultCreateOp);
-		defaultCreateOp.referenceName := defaultRef.name;
-		defaultCreateOp.typeName := s.getDomainClassString();
-		defaultCreateOp.variableName := 'instance';
 	}
 	
 	NODE_TOOLS.ownedTools.add(t);

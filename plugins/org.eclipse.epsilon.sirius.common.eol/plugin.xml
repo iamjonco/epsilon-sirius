@@ -5,7 +5,7 @@
          id="org.eclipse.epsilon.sirius.EolInterpreter"
          point="org.eclipse.sirius.common.expressionInterpreter">
       <expressionInterpreterProvider
-            interpreterProviderClass="org.eclipse.epsilon.sirius.common.ocl.business.internal.interpreter.EolInterpreter">
+            interpreterProviderClass="org.eclipse.epsilon.sirius.common.eol.business.internal.interpreter.EolInterpreter">
       </expressionInterpreterProvider>
    </extension>
 
