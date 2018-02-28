@@ -114,7 +114,7 @@ operation ECore!ENamedElement getLinkAnn() : ECore!EAnnotation {
 
 @cached
 operation ECore!EClass getCompartmentReferences() : Collection {
-	return self.getContainmentReferences().select(r|r.isAnnotatedAs('gmf.compartment'));
+	return self.getContainmentRefs().select(r|r.isAnnotatedAs('gmf.compartment'));
 }
 
 @cached
@@ -145,7 +145,7 @@ operation getDiagramClass() : ECore!EClass {
 }
 
 @cached
-operation ECore!EClass getContainmentReferences() {
+operation ECore!EClass getContainmentRefs() {
 	return self.eAllStructuralFeatures.select(sf : ECore!EReference | sf.containment);
 }
 
@@ -156,5 +156,16 @@ operation ECore!EClass getConcreteSubtypes() : Collection {
 
 @cached
 operation ECore!EClass hasCompartments() : Boolean {
-	return self.isNode() and self.getContainmentReferences().exists(r|r.isAnnotatedAs('gmf.compartment'));
+	return self.isNode() and self.getContainmentRefs().exists(r|r.isAnnotatedAs('gmf.compartment'));
 }
+
+@cached
+operation ECore!EClass getAllSuitableContainmentReferences() : OrderedSet {
+	var suitableReferences : OrderedSet;
+	for (ref in ECore!EReference.all.select(sf|sf.containment)){
+		if (self.eAllSuperTypes.includes(ref.eType) or self = ref.eType) 
+			suitableReferences.add(ref);
+	}
+	return suitableReferences;
+}
+
