@@ -381,11 +381,12 @@ rule AbstractNodeCreateTool
 	t.viewVariable.name := "containerView";
 	
 	// Build pre-condition expression
-	var preExp : String := "eol:container.eClass.eAllStructuralFeatures" +
+	t.precondition := "eol:container.eClass.eAllStructuralFeatures" +
 		".exists(er : Model!EReference | er.containment and " +
-		"('%s' == er.eType.name or Model!EClass.all.selectOne(ec|ec.name=='%s')" +
-		".eAllSuperTypes.exists(st|st.name == er.eType.name)))";
-	t.precondition := preExp.replace('%s', s.name);
+		"('%s' == er.eType.name or" +
+		"Model!EClass.all.selectOne(ec|ec.name=='%s')" +
+		".eAllSuperTypes.exists(st|st.name == er.eType.name)))"
+		.replace('%s', s.name);
 	
 	// Build Operation
 	var initialOp := new ODesign!InitialNodeCreationOperation;
