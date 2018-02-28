@@ -365,8 +365,8 @@ rule AbstractNodeCreateTool
 	to t : ODesign!diagram::description::tool::MappingBasedToolDescription {
 	guard: s.isNode()
 	
-	var ann := s.getNodeAnn();
-	
+	NODE_TOOLS.ownedTools.add(t);
+		
 	// Initialise default variables
 	t.name := s.name;
 	t.variable := new ODesign!NodeCreationVariable;
