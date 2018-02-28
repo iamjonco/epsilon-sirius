@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.epsilon.sirius_1.0.0.201802281412.jar" id="org.eclipse.epsilon.sirius" version="1.0.0.201802281412">
+   <feature url="features/org.eclipse.epsilon.sirius_1.0.0.201802281708.jar" id="org.eclipse.epsilon.sirius" version="1.0.0.201802281708">
       <category name="epsilon-sirius"/>
    </feature>
    <category-def name="epsilon-sirius" label="Epsilon-Sirius"/>
