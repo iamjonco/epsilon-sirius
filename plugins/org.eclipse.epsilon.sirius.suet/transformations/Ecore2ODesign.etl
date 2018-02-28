@@ -375,6 +375,7 @@ rule AbstractNodeCreateTool
 	t.viewVariable.name := "containerView";
 	
 	// Build pre-condition expression
+	// TODO: Replace with isKindOf
 	t.precondition := "eol:var clazz = Model!EClass.all.selectOne(ec|ec.name=='"+s.name+"');"
 	+ "var containments = container.eClass.eAllStructuralFeatures.select(sf|sf.containment);"
 	+ "return containments.exists(ref|clazz.eAllSuperTypes.collect(st|st.name).includes(ref.eType.name) "
@@ -423,8 +424,6 @@ rule AbstractNodeCreateTool
 			switchChild.subModelOperations.add(createOp);
 		}
 	}
-	
-	NODE_TOOLS.ownedTools.add(t);
 }
 
 rule CreateNodeTool
@@ -445,6 +444,83 @@ rule CreateContainerTool
 	t.containerMappings.add(s.equivalent('EClass2ContainerMapping'));
 }
 
+rule CreateElementEdgeTool
+	transform s : ECore!EClass
+	to t : ODesign!diagram::description::tool::EdgeCreationDescription {
+	guard: s.isLink() 
+
+	// Mappings
+	EDGE_TOOLS.ownedTools.add(t);
+	t.edgeMappings.add(s.equivalent('EClass2EdgeMapping'));
+	t.name := s.name;
+	
+	// Helper variables
+	var ann := s.getLinkAnn();
+
+	// Build constraints to determine if link will be valid
+	var srcDet := ann.getDetail('source');
+	var srcType := s.eAllStructuralFeatures.selectOne(sf|sf.name==srcDet).eType;
+	t.connectionStartPrecondition := "eol:return preSource.isKindOf(Model!"+srcType.name+");";
+	
+	var tgtDet := ann.getDetail('target');
+	var tgtType := s.eAllStructuralFeatures.selectOne(sf|sf.name==tgtDet).eType;
+	t.precondition := "eol:return preSource.isKindOf(Model!"+tgtType.name+");";
+
+	// TODO: what if there is more than one place to put the new element?
+	// Select context to place the new element
+	var containmentRef := s.getOneSuitableContainmentReference();
+
+	var initialOp := new ODesign!InitEdgeCreationOperation;
+	t.initialOperation := initialOp;
+	
+	var contextOp := new ODesign!ChangeContext;
+	t.initialOperation.firstModelOperations := contextOp;
+	contextOp.browseExpression := "eol:return Model!"+containmentRef.eContainingClass.name+".all.first();";
+	
+	var createOp := new ODesign!CreateInstance;
+	contextOp.subModelOperations.add(createOp);
+	createOp.referenceName := containmentRef.name;
+	createOp.typeName := s.getDomainClassString();
+	createOp.variableName := 'instance';
+	
+	var setSrcOp := new ODesign!SetValue;
+	setSrcOp.featureName := srcDet;
+	setSrcOp.valueExpression := "eol:return source;";
+	createOp.subModelOperations.add(setSrcOp);
+	
+	var setTgtOp := new ODesign!SetValue;
+	setTgtOp.featureName := tgtDet;
+	setTgtOp.valueExpression := "eol:return target;";
+	createOp.subModelOperations.add(setTgtOp);
+}
+
+rule CreateRelationEdgeTool 
+	transform s : ECore!EReference
+	to t : ODesign!diagram::description::tool::EdgeCreationDescription {
+	guard: s.isLink()
+	
+	// Mappings
+	var edgeMapping := s.equivalent('EReference2EdgeMapping');
+	EDGE_TOOLS.ownedTools.add(t);
+	t.edgeMappings.add(edgeMapping);
+	t.name := edgeMapping.name;
+	
+	// precondition
+	t.connectionStartPrecondition := "eol:return preSource.isKindOf(Model!"+s.eContainingClass.name+");";
+	t.precondition := "eol:return preTarget.isKindOf(Model!"+s.eType.name+");";
+	
+	var initialOp := new ODesign!InitEdgeCreationOperation;
+	t.initialOperation := initialOp;
+	
+	var contextOp := new ODesign!ChangeContext;
+	t.initialOperation.firstModelOperations := contextOp;
+	contextOp.browseExpression := "eol:return source;";
+	
+	var setTgtOp := new ODesign!SetValue;
+	setTgtOp.featureName := s.name;
+	setTgtOp.valueExpression := "eol:return target;";
+	contextOp.subModelOperations.add(setTgtOp);
+}
 /**
  * ============================================================================
  * HELPER OPERATIONS
