@@ -175,7 +175,19 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 
 	@Override
 	public Object evaluate(EObject target, String expression) throws EvaluationException {
-		// Initial checks	
+		boolean debug = false;
+		if (expression.trim().startsWith("eol:debug")) {
+			debug = true;
+			expression = "eol:" + expression.substring("eol:debug".length());
+		}
+
+		if (debug) {
+			System.out.println("=====");
+			System.out.println(expression);
+			System.out.println(target);
+		}
+
+		// Initial checks
 		if (expression.trim().equals(EolInterpreter.EOL_PREFIX)) return null;
 		this.setVariable("self", target);
 		
@@ -230,6 +242,7 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 		} finally {
 			if (context != null) context.dispose();
 		}
+		if (debug) System.out.println(result);
 		return result;
 	}
 
