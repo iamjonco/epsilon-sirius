@@ -395,7 +395,7 @@ rule AbstractNodeCreateTool
 	// Select the container to place new container in
 	var contextOp := new ODesign!ChangeContext;
 	t.initialOperation.firstModelOperations := contextOp;
-	contextOp.browseExpression := 'var:container';
+	contextOp.browseExpression := 'eol:container';
 	
 	// Figure out what type of container and feature to place into
 	var containments = s.getAllSuitableContainmentReferences();
