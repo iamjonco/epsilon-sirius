@@ -17,6 +17,10 @@ pre {
 	topViewpoint.modelFileExtension := 
 		getDiagramClass().getAnnotationValue('gmf.diagram','model.extension').ifUndefined('*');
 	
+	// TODO: Handle multiple metamodel imports
+	// TODO: do we need multiple tool sections?
+	// FIXME: Href link in metamodel that is generated is not well formatted
+	// TODO: Handle multiple layers - probs should be the nodes that set it
 	var diagramMapping := new ODesign!diagram::description::DiagramDescription;
 	topViewpoint.ownedRepresentations.add(diagramMapping);
 	diagramMapping.name := getDiagramClass()
@@ -109,17 +113,7 @@ post {
 	}
 }
 
-// TODO: Handle multiple metamodel imports
-// TODO: do we need multiple tool sections?
-// FIXME: Href link in metamodel that is generated is not well formatted
-// TODO: Handle multiple layers - probs should be the nodes that set it
-rule EClass2DiagramDescription
-	transform s : ECore!EClass
-	to t : ODesign!diagram::description::DiagramDescription {
-	guard: s.isAnnotatedAs('gmf.diagram')
-	
 
-}
 
 /**
  * ============================================================================
