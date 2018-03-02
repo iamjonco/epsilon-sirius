@@ -200,7 +200,7 @@ public class EolInterpreter implements IInterpreter, IInterpreterProvider {
 			// Setup Semantic Model
 			final InMemoryEmfModel semanticModel = new InMemoryEmfModel(target.eResource());
 			models.put(target.eResource(), semanticModel);
-			semanticModel.setName("Model"); // FIXME: situation where there is more than one model
+			semanticModel.setName("Semantic"); // FIXME: situation where there is more than one model
 			context = module.getContext();
 			context.getModelRepository().addModel(semanticModel);
 			
