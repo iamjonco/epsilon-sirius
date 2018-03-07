@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:filesystem="http://org.eclipse.epsilon.sirius.examples/filesystem" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis xmi:id="_qBQUYB4IEei2sIhuQNyUBA" selectedViews="_s2qbQB4IEei2sIhuQNyUBA" version="12.1.0.201708031200">
+    <semanticResources>example.filesystem</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" xmi:id="_s2qbQB4IEei2sIhuQNyUBA">
+      <viewpoint xmi:type="description:Viewpoint" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']"/>
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" xmi:id="_ceIwkCEcEei-IMPMUElV_Q" name="new Diagram" repPath="#_cOiOUCEcEei-IMPMUElV_Q">
+        <description xmi:type="description_1:DiagramDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']"/>
+        <target xmi:type="filesystem:Filesystem" href="example.filesystem#/"/>
+      </ownedRepresentationDescriptors>
+    </ownedViews>
+  </viewpoint:DAnalysis>
+  <diagram:DSemanticDiagram xmi:id="_ceG7YCEcEei-IMPMUElV_Q" name="new Diagram" uid="_cOiOUCEcEei-IMPMUElV_Q">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_ceG7YSEcEei-IMPMUElV_Q" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" xmi:id="_ceG7YiEcEei-IMPMUElV_Q"/>
+    </ownedAnnotationEntries>
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_ce93ACEcEei-IMPMUElV_Q" source="GMF_DIAGRAMS">
+      <data xmi:type="notation:Diagram" xmi:id="_ce93ASEcEei-IMPMUElV_Q" type="Sirius" element="_ceG7YCEcEei-IMPMUElV_Q" measurementUnit="Pixel">
+        <children xmi:type="notation:Node" xmi:id="_cfai8CEcEei-IMPMUElV_Q" type="2002" element="_ceG7ZCEcEei-IMPMUElV_Q">
+          <children xmi:type="notation:Node" xmi:id="_cfolYCEcEei-IMPMUElV_Q" type="5006"/>
+          <children xmi:type="notation:Node" xmi:id="_cfqakCEcEei-IMPMUElV_Q" type="7001">
+            <children xmi:type="notation:Node" xmi:id="_cf4dACEcEei-IMPMUElV_Q" type="3008" element="_ceG7ZiEcEei-IMPMUElV_Q">
+              <children xmi:type="notation:Node" xmi:id="_cf5EECEcEei-IMPMUElV_Q" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_cf5rICEcEei-IMPMUElV_Q" type="7002">
+                <children xmi:type="notation:Node" xmi:id="_cgA_4CEcEei-IMPMUElV_Q" type="3007" element="_ceG7aCEcEei-IMPMUElV_Q">
+                  <children xmi:type="notation:Node" xmi:id="_cgBm8CEcEei-IMPMUElV_Q" type="5003">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_cgBm8SEcEei-IMPMUElV_Q" y="5"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_cgCOACEcEei-IMPMUElV_Q" type="3016" element="_ceG7aSEcEei-IMPMUElV_Q">
+                    <styles xmi:type="notation:ShapeStyle" xmi:id="_cgCOASEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cgCOAiEcEei-IMPMUElV_Q"/>
+                  </children>
+                  <styles xmi:type="notation:ShapeStyle" xmi:id="_cgA_4SEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cgA_4iEcEei-IMPMUElV_Q" x="30" y="29" width="120" height="40"/>
+                </children>
+                <styles xmi:type="notation:SortingStyle" xmi:id="_cf5rISEcEei-IMPMUElV_Q"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_cf5rIiEcEei-IMPMUElV_Q"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_cf4dASEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cf4dAiEcEei-IMPMUElV_Q" x="29" y="28"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_cf7gUCEcEei-IMPMUElV_Q" type="3007" element="_ceG7aiEcEei-IMPMUElV_Q">
+              <children xmi:type="notation:Node" xmi:id="_cf8ucCEcEei-IMPMUElV_Q" type="5003">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_cf8ucSEcEei-IMPMUElV_Q" y="5"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_cgC1ECEcEei-IMPMUElV_Q" type="3016" element="_ceG7ayEcEei-IMPMUElV_Q">
+                <styles xmi:type="notation:ShapeStyle" xmi:id="_cgC1ESEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cgC1EiEcEei-IMPMUElV_Q"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_cf7gUSEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cf7gUiEcEei-IMPMUElV_Q" x="19" y="143" width="120" height="40"/>
+            </children>
+            <styles xmi:type="notation:SortingStyle" xmi:id="_cfqakSEcEei-IMPMUElV_Q"/>
+            <styles xmi:type="notation:FilteringStyle" xmi:id="_cfqakiEcEei-IMPMUElV_Q"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_cfai8SEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cfai8iEcEei-IMPMUElV_Q"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_cf1ZsCEcEei-IMPMUElV_Q" type="2002" element="_ceG7bCEcEei-IMPMUElV_Q">
+          <children xmi:type="notation:Node" xmi:id="_cf2AwCEcEei-IMPMUElV_Q" type="5006"/>
+          <children xmi:type="notation:Node" xmi:id="_cf2AwSEcEei-IMPMUElV_Q" type="7001">
+            <children xmi:type="notation:Node" xmi:id="_cgDcICEcEei-IMPMUElV_Q" type="3008" element="_ceG7biEcEei-IMPMUElV_Q">
+              <children xmi:type="notation:Node" xmi:id="_cgEDMCEcEei-IMPMUElV_Q" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_cgEDMSEcEei-IMPMUElV_Q" type="7002">
+                <styles xmi:type="notation:SortingStyle" xmi:id="_cgEDMiEcEei-IMPMUElV_Q"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_cgEDMyEcEei-IMPMUElV_Q"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_cgDcISEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cgDcIiEcEei-IMPMUElV_Q" x="29" y="28"/>
+            </children>
+            <styles xmi:type="notation:SortingStyle" xmi:id="_cf2AwiEcEei-IMPMUElV_Q"/>
+            <styles xmi:type="notation:FilteringStyle" xmi:id="_cf2AwyEcEei-IMPMUElV_Q"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_cf1ZsSEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cf1ZsiEcEei-IMPMUElV_Q" x="320" y="140"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_fIxK0CEcEei-IMPMUElV_Q" type="2002" element="_fEaPQCEcEei-IMPMUElV_Q">
+          <children xmi:type="notation:Node" xmi:id="_fIxx4CEcEei-IMPMUElV_Q" type="5006"/>
+          <children xmi:type="notation:Node" xmi:id="_fIxx4SEcEei-IMPMUElV_Q" type="7001">
+            <children xmi:type="notation:Node" xmi:id="_g8-TYCEcEei-IMPMUElV_Q" type="3008" element="_g5IVMCEcEei-IMPMUElV_Q">
+              <children xmi:type="notation:Node" xmi:id="_g8-6cCEcEei-IMPMUElV_Q" type="5005"/>
+              <children xmi:type="notation:Node" xmi:id="_g8_hgCEcEei-IMPMUElV_Q" type="7002">
+                <children xmi:type="notation:Node" xmi:id="_kblIQCEcEei-IMPMUElV_Q" type="3007" element="_kW3AUCEcEei-IMPMUElV_Q">
+                  <children xmi:type="notation:Node" xmi:id="_kblIQyEcEei-IMPMUElV_Q" type="5003">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_kblIRCEcEei-IMPMUElV_Q" y="5"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_kblvUCEcEei-IMPMUElV_Q" type="3016" element="_kW3nYCEcEei-IMPMUElV_Q">
+                    <styles xmi:type="notation:ShapeStyle" xmi:id="_kblvUSEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kblvUiEcEei-IMPMUElV_Q"/>
+                  </children>
+                  <styles xmi:type="notation:ShapeStyle" xmi:id="_kblIQSEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kblIQiEcEei-IMPMUElV_Q" x="60" y="19" width="30" height="40"/>
+                </children>
+                <styles xmi:type="notation:SortingStyle" xmi:id="_g8_hgSEcEei-IMPMUElV_Q"/>
+                <styles xmi:type="notation:FilteringStyle" xmi:id="_g8_hgiEcEei-IMPMUElV_Q"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_g8-TYSEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_g8-TYiEcEei-IMPMUElV_Q" x="19" y="33"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_k5nIECEcEei-IMPMUElV_Q" type="3007" element="_k0qWoCEcEei-IMPMUElV_Q">
+              <children xmi:type="notation:Node" xmi:id="_k5nvICEcEei-IMPMUElV_Q" type="5003">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_k5nvISEcEei-IMPMUElV_Q" y="5"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_k5nvIiEcEei-IMPMUElV_Q" type="3016" element="_k0q9sCEcEei-IMPMUElV_Q">
+                <styles xmi:type="notation:ShapeStyle" xmi:id="_k5nvIyEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_k5nvJCEcEei-IMPMUElV_Q"/>
+              </children>
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_k5nIESEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_k5nIEiEcEei-IMPMUElV_Q" x="109" y="153" width="30" height="40"/>
+            </children>
+            <styles xmi:type="notation:SortingStyle" xmi:id="_fIxx4iEcEei-IMPMUElV_Q"/>
+            <styles xmi:type="notation:FilteringStyle" xmi:id="_fIxx4yEcEei-IMPMUElV_Q"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_fIxK0SEcEei-IMPMUElV_Q" fontName="Segoe UI" fontHeight="8"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fIxK0iEcEei-IMPMUElV_Q" x="530" y="115" width="205" height="208"/>
+        </children>
+        <styles xmi:type="notation:DiagramStyle" xmi:id="_ce93AiEcEei-IMPMUElV_Q"/>
+        <edges xmi:type="notation:Edge" xmi:id="_cgdr0CEcEei-IMPMUElV_Q" type="4001" element="_ceG7cCEcEei-IMPMUElV_Q" source="_cgDcICEcEei-IMPMUElV_Q" target="_cf4dACEcEei-IMPMUElV_Q">
+          <children xmi:type="notation:Node" xmi:id="_cggIECEcEei-IMPMUElV_Q" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cggIESEcEei-IMPMUElV_Q" x="8" y="-7"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cggvICEcEei-IMPMUElV_Q" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cggvISEcEei-IMPMUElV_Q" x="-8" y="8"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cgh9QCEcEei-IMPMUElV_Q" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cgh9QSEcEei-IMPMUElV_Q" x="-5" y="8"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_cgdr0SEcEei-IMPMUElV_Q"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_cgdr0iEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_cgdr0yEcEei-IMPMUElV_Q" points="[-74, -32, 240, 102]$[-233, -100, 81, 34]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_cg-CICEcEei-IMPMUElV_Q" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_cg-CISEcEei-IMPMUElV_Q" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_cg-pMCEcEei-IMPMUElV_Q" type="4001" element="_ceG7ciEcEei-IMPMUElV_Q" source="_cf7gUCEcEei-IMPMUElV_Q" target="_cgA_4CEcEei-IMPMUElV_Q">
+          <children xmi:type="notation:Node" xmi:id="_cg_QQCEcEei-IMPMUElV_Q" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cg_QQSEcEei-IMPMUElV_Q" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cg_QQiEcEei-IMPMUElV_Q" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cg_QQyEcEei-IMPMUElV_Q" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_cg_QRCEcEei-IMPMUElV_Q" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cg_QRSEcEei-IMPMUElV_Q" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_cg-pMSEcEei-IMPMUElV_Q"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_cg-pMiEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_cg-pMyEcEei-IMPMUElV_Q" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_cg_3UCEcEei-IMPMUElV_Q" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_cg_3USEcEei-IMPMUElV_Q" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_l_oU8CEcEei-IMPMUElV_Q" type="4001" element="_l7KEoCEcEei-IMPMUElV_Q" source="_k5nIECEcEei-IMPMUElV_Q" target="_kblIQCEcEei-IMPMUElV_Q">
+          <children xmi:type="notation:Node" xmi:id="_l_o8ACEcEei-IMPMUElV_Q" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_l_o8ASEcEei-IMPMUElV_Q" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_l_o8AiEcEei-IMPMUElV_Q" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_l_o8AyEcEei-IMPMUElV_Q" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_l_o8BCEcEei-IMPMUElV_Q" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_l_o8BSEcEei-IMPMUElV_Q" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_l_oU8SEcEei-IMPMUElV_Q"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_l_oU8iEcEei-IMPMUElV_Q" fontName="Segoe UI"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_l_oU8yEcEei-IMPMUElV_Q" points="[0, 0, 30, 55]$[-30, -55, 0, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_l_pjECEcEei-IMPMUElV_Q" id="(0.6666666666666666,0.0)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_l_pjESEcEei-IMPMUElV_Q" id="(0.5,1.0)"/>
+        </edges>
+      </data>
+    </ownedAnnotationEntries>
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_ceG7ZCEcEei-IMPMUElV_Q" name="C:">
+      <target xmi:type="filesystem:Drive" href="example.filesystem#//@drives.0"/>
+      <semanticElements xmi:type="filesystem:Drive" href="example.filesystem#//@drives.0"/>
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_ceG7ZSEcEei-IMPMUElV_Q" borderSize="2" borderSizeComputationExpression="2" borderLineStyle="dash">
+        <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_ceG7ZiEcEei-IMPMUElV_Q" name="My Documents" incomingEdges="_ceG7cCEcEei-IMPMUElV_Q">
+        <target xmi:type="filesystem:Folder" href="example.filesystem#//@drives.0/@contents.0"/>
+        <semanticElements xmi:type="filesystem:Folder" href="example.filesystem#//@drives.0/@contents.0"/>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_ceG7ZyEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" borderLineStyle="dash">
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']"/>
+        <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_ceG7aCEcEei-IMPMUElV_Q" name="photo.jpg" incomingEdges="_ceG7ciEcEei-IMPMUElV_Q" width="12" height="4" resizeKind="NSEW">
+          <target xmi:type="filesystem:File" href="example.filesystem#//@drives.0/@contents.0/@contents.0"/>
+          <semanticElements xmi:type="filesystem:File" href="example.filesystem#//@drives.0/@contents.0/@contents.0"/>
+          <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_ceG7aSEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="12" verticalDiameter="4" color="211,211,211">
+            <description xmi:type="style:EllipseNodeDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']/@style"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']"/>
+        </ownedDiagramElements>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_ceG7aiEcEei-IMPMUElV_Q" name="photo.ink" outgoingEdges="_ceG7ciEcEei-IMPMUElV_Q" width="12" height="4" resizeKind="NSEW">
+        <target xmi:type="filesystem:Shortcut" href="example.filesystem#//@drives.0/@contents.1"/>
+        <semanticElements xmi:type="filesystem:Shortcut" href="example.filesystem#//@drives.0/@contents.1"/>
+        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_ceG7ayEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="12" verticalDiameter="4" color="211,211,211">
+          <description xmi:type="style:EllipseNodeDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut']"/>
+      </ownedDiagramElements>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_ceG7bCEcEei-IMPMUElV_Q" name="D:">
+      <target xmi:type="filesystem:Drive" href="example.filesystem#//@drives.1"/>
+      <semanticElements xmi:type="filesystem:Drive" href="example.filesystem#//@drives.1"/>
+      <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+      <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+      <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_ceG7bSEcEei-IMPMUElV_Q" borderSize="2" borderSizeComputationExpression="2" borderLineStyle="dash">
+        <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_ceG7biEcEei-IMPMUElV_Q" name="Backup" outgoingEdges="_ceG7cCEcEei-IMPMUElV_Q">
+        <target xmi:type="filesystem:Folder" href="example.filesystem#//@drives.1/@contents.0"/>
+        <semanticElements xmi:type="filesystem:Folder" href="example.filesystem#//@drives.1/@contents.0"/>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_ceG7byEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" borderLineStyle="dash">
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']"/>
+      </ownedDiagramElements>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_ceG7cCEcEei-IMPMUElV_Q" sourceNode="_ceG7biEcEei-IMPMUElV_Q" targetNode="_ceG7ZiEcEei-IMPMUElV_Q">
+      <target xmi:type="filesystem:Sync" href="example.filesystem#//@syncs.0"/>
+      <semanticElements xmi:type="filesystem:Sync" href="example.filesystem#//@syncs.0"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_ceG7cSEcEei-IMPMUElV_Q" lineStyle="dot" targetArrow="NoDecoration" size="2" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Sync']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Sync']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_ceG7ciEcEei-IMPMUElV_Q" sourceNode="_ceG7aiEcEei-IMPMUElV_Q" targetNode="_ceG7aCEcEei-IMPMUElV_Q">
+      <target xmi:type="filesystem:Shortcut" href="example.filesystem#//@drives.0/@contents.1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_ceG7cyEcEei-IMPMUElV_Q" lineStyle="dash" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Shortcut2File']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Shortcut2File']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_fEaPQCEcEei-IMPMUElV_Q" name="H:">
+      <target xmi:type="filesystem:Drive" href="example.filesystem#//@drives.2"/>
+      <semanticElements xmi:type="filesystem:Drive" href="example.filesystem#//@drives.2"/>
+      <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_fEa2UCEcEei-IMPMUElV_Q" borderSize="2" borderSizeComputationExpression="2" borderLineStyle="dash">
+        <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_g5IVMCEcEei-IMPMUElV_Q" name="thing">
+        <target xmi:type="filesystem:Folder" href="example.filesystem#//@drives.2/@contents.0"/>
+        <semanticElements xmi:type="filesystem:Folder" href="example.filesystem#//@drives.2/@contents.0"/>
+        <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+        <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+        <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_g5I8QCEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" borderLineStyle="dash">
+          <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']"/>
+        <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_kW3AUCEcEei-IMPMUElV_Q" incomingEdges="_l7KEoCEcEei-IMPMUElV_Q" width="3" height="4" resizeKind="NSEW">
+          <target xmi:type="filesystem:File" href="example.filesystem#//@drives.2/@contents.0/@contents.0"/>
+          <semanticElements xmi:type="filesystem:File" href="example.filesystem#//@drives.2/@contents.0/@contents.0"/>
+          <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_kW3nYCEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="3" verticalDiameter="4" color="211,211,211">
+            <description xmi:type="style:EllipseNodeDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']/@style"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']"/>
+        </ownedDiagramElements>
+      </ownedDiagramElements>
+      <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_k0qWoCEcEei-IMPMUElV_Q" outgoingEdges="_l7KEoCEcEei-IMPMUElV_Q" width="3" height="4" resizeKind="NSEW">
+        <target xmi:type="filesystem:Shortcut" href="example.filesystem#//@drives.2/@contents.1"/>
+        <semanticElements xmi:type="filesystem:Shortcut" href="example.filesystem#//@drives.2/@contents.1"/>
+        <ownedStyle xmi:type="diagram:Ellipse" xmi:id="_k0q9sCEcEei-IMPMUElV_Q" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" horizontalDiameter="3" verticalDiameter="4" color="211,211,211">
+          <description xmi:type="style:EllipseNodeDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut']"/>
+      </ownedDiagramElements>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_l7KEoCEcEei-IMPMUElV_Q" sourceNode="_k0qWoCEcEei-IMPMUElV_Q" targetNode="_kW3AUCEcEei-IMPMUElV_Q">
+      <target xmi:type="filesystem:Shortcut" href="example.filesystem#//@drives.2/@contents.1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_l7KrsCEcEei-IMPMUElV_Q" lineStyle="dash" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Shortcut2File']/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Shortcut2File']"/>
+    </ownedDiagramElements>
+    <description xmi:type="description_1:DiagramDescription" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_ceG7dCEcEei-IMPMUElV_Q"/>
+    <activatedLayers xmi:type="description_1:Layer" href="platform:/resource/example.filesystem.design/description/filesystem.odesign#//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer"/>
+    <target xmi:type="filesystem:Filesystem" href="example.filesystem#/"/>
+  </diagram:DSemanticDiagram>
+</xmi:XMI>

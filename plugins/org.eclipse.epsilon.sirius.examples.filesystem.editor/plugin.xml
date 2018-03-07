@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated filesystem -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="org.eclipse.epsilon.sirius.examples.filesystem.presentation.FilesystemModelWizardID"
+            name="%_UI_FilesystemModelWizard_label"
+            class="org.eclipse.epsilon.sirius.examples.filesystem.presentation.FilesystemModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/FilesystemModelFile.gif">
+         <description>%_UI_FilesystemModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated filesystem -->
+      <editor
+            id="org.eclipse.epsilon.sirius.examples.filesystem.presentation.FilesystemEditorID"
+            name="%_UI_FilesystemEditor_label"
+            icon="icons/full/obj16/FilesystemModelFile.gif"
+            extensions="filesystem"
+            class="org.eclipse.epsilon.sirius.examples.filesystem.presentation.FilesystemEditor"
+            contributorClass="org.eclipse.epsilon.sirius.examples.filesystem.presentation.FilesystemActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

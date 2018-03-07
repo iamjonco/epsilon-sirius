@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ASCII"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="Filesystem" version="12.0.0.2017041100">
+  <ownedViewpoints name="Filesystem" modelFileExtension="filesystem">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="Diagram" domainClass="filesystem::Filesystem">
+      <metamodel href="../../org.eclipse.epsilon.sirius.examples.filesystem/model/filesystem.ecore#/"/>
+      <defaultLayer name="Default">
+        <edgeMappings name="Sync" preconditionExpression="eol:return self.isTypeOf(Semantic!filesystem::Sync);" semanticCandidatesExpression="eol:return self.eContents;" sourceMapping="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']" targetMapping="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']" targetFinderExpression="feature:target" sourceFinderExpression="feature:source" domainClass="filesystem::Sync" useDomainElement="true">
+          <style strokeColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_EDGE_COLOR']" lineStyle="dot" targetArrow="NoDecoration" sizeComputationExpression="2"/>
+        </edgeMappings>
+        <edgeMappings name="Shortcut2File" sourceMapping="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut']" targetMapping="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']" targetFinderExpression="feature:target">
+          <style strokeColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_EDGE_COLOR']" lineStyle="dash"/>
+        </edgeMappings>
+        <containerMappings name="Drive" preconditionExpression="eol:return self.isTypeOf(Semantic!filesystem::Drive);" semanticCandidatesExpression="eol:return self.eContents;" domainClass="filesystem::Drive" reusedContainerMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']">
+          <subNodeMappings name="Shortcut" preconditionExpression="eol:return self.isTypeOf(Semantic!filesystem::Shortcut);" semanticCandidatesExpression="eol:return self.eContents;" domainClass="filesystem::Shortcut">
+            <style xsi:type="style:EllipseNodeDescription" borderSizeComputationExpression="1" borderColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_BORDER']" labelColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_LABEL']" labelPosition="node" resizeKind="NSEW" color="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_COLOR']" horizontalDiameterComputationExpression="[view.name.size()+3/]" verticalDiameterComputationExpression="4"/>
+          </subNodeMappings>
+          <subNodeMappings name="File" preconditionExpression="eol:return self.isTypeOf(Semantic!filesystem::File);" semanticCandidatesExpression="eol:return self.eContents;" domainClass="filesystem::File">
+            <style xsi:type="style:EllipseNodeDescription" borderSizeComputationExpression="1" borderColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_BORDER']" labelColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_LABEL']" labelPosition="node" resizeKind="NSEW" color="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_COLOR']" horizontalDiameterComputationExpression="[view.name.size()+3/]" verticalDiameterComputationExpression="4"/>
+          </subNodeMappings>
+          <subContainerMappings name="Folder" preconditionExpression="eol:return self.isTypeOf(Semantic!filesystem::Folder);" semanticCandidatesExpression="eol:return self.eContents;" domainClass="filesystem::Folder" reusedNodeMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']" reusedContainerMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive'] //@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']">
+            <style xsi:type="style:FlatContainerStyleDescription" borderSizeComputationExpression="1" borderColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_BORDER']" borderLineStyle="dash" labelColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_LABEL']">
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#/0/@systemColors/@entries[name='white']"/>
+              <foregroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#/0/@systemColors/@entries[name='light_gray']"/>
+            </style>
+          </subContainerMappings>
+          <style xsi:type="style:FlatContainerStyleDescription" borderSizeComputationExpression="2" borderColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_BORDER']" borderLineStyle="dash" labelColor="//@userColorsPalettes[name='Default']/@entries[name='DEFAULT_LABEL']">
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#/0/@systemColors/@entries[name='white']"/>
+            <foregroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#/0/@systemColors/@entries[name='light_gray']"/>
+          </style>
+        </containerMappings>
+        <toolSections name="Nodes">
+          <ownedTools xsi:type="tool:ContainerCreationDescription" name="Drive" precondition="eol:var clazz = Semantic!EClass.all.selectOne(ec|ec.name=='Drive');var containments = container.eClass.eAllStructuralFeatures.select(sf|sf.containment);return containments.exists(ref|clazz.eAllSuperTypes.collect(st|st.name).includes(ref.eType.name) or clazz.name == ref.eType.name);" containerMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="eol:return container;">
+                <subModelOperations xsi:type="tool_1:Switch">
+                  <cases conditionExpression="eol:return container.isTypeOf(Semantic!Filesystem);">
+                    <subModelOperations xsi:type="tool_1:CreateInstance" typeName="filesystem::Drive" referenceName="drives"/>
+                  </cases>
+                  <default>
+                    <subModelOperations xsi:type="tool_1:CreateInstance" typeName="filesystem::Drive" referenceName="contents"/>
+                  </default>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:ContainerCreationDescription" name="Folder" precondition="eol:var clazz = Semantic!EClass.all.selectOne(ec|ec.name=='Folder');var containments = container.eClass.eAllStructuralFeatures.select(sf|sf.containment);return containments.exists(ref|clazz.eAllSuperTypes.collect(st|st.name).includes(ref.eType.name) or clazz.name == ref.eType.name);" containerMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subContainerMappings[name='Folder']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="eol:return container;">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="filesystem::Folder" referenceName="contents"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Shortcut" precondition="eol:var clazz = Semantic!EClass.all.selectOne(ec|ec.name=='Shortcut');var containments = container.eClass.eAllStructuralFeatures.select(sf|sf.containment);return containments.exists(ref|clazz.eAllSuperTypes.collect(st|st.name).includes(ref.eType.name) or clazz.name == ref.eType.name);" nodeMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='Shortcut']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="eol:return container;">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="filesystem::Shortcut" referenceName="contents"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="File" precondition="eol:var clazz = Semantic!EClass.all.selectOne(ec|ec.name=='File');var containments = container.eClass.eAllStructuralFeatures.select(sf|sf.containment);return containments.exists(ref|clazz.eAllSuperTypes.collect(st|st.name).includes(ref.eType.name) or clazz.name == ref.eType.name);" nodeMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@containerMappings[name='Drive']/@subNodeMappings[name='File']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="eol:return container;">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="filesystem::File" referenceName="contents"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+        <toolSections name="Links">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Sync" precondition="eol:return preSource.isKindOf(Semantic!File);" edgeMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Sync']" connectionStartPrecondition="eol:return preSource.isKindOf(Semantic!File);">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="eol:return Semantic!Filesystem.all.first();">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="filesystem::Sync" referenceName="syncs">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="source" valueExpression="eol:return source;"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="target" valueExpression="eol:return target;"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Shortcut2File" precondition="eol:return preTarget.isKindOf(Semantic!File);" edgeMappings="//@ownedViewpoints[name='Filesystem']/@ownedRepresentations[name='Diagram']/@defaultLayer/@edgeMappings[name='Shortcut2File']" connectionStartPrecondition="eol:return preSource.isKindOf(Semantic!Shortcut);">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="eol:return source;">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="target" valueExpression="eol:return target;"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+  </ownedViewpoints>
+  <userColorsPalettes name="Default">
+    <entries xsi:type="description:UserFixedColor" red="211" green="211" blue="211" name="DEFAULT_COLOR"/>
+    <entries xsi:type="description:UserFixedColor" red="0" green="0" blue="0" name="DEFAULT_EDGE_COLOR"/>
+    <entries xsi:type="description:UserFixedColor" red="0" green="0" blue="0" name="DEFAULT_BORDER"/>
+    <entries xsi:type="description:UserFixedColor" red="0" green="0" blue="0" name="DEFAULT_LABEL"/>
+  </userColorsPalettes>
+</description:Group>

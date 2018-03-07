@@ -1,0 +1,39 @@
+@namespace(uri="http://org.eclipse.epsilon.sirius.examples/filesystem", prefix="filesystem")
+package filesystem;
+
+@gmf.diagram(model.extension="filesystem")
+class Filesystem {
+    val Drive[*] drives;
+    val Sync[*] syncs;
+}
+
+@gmf.node(border.style="dash", border.width="2")
+class Drive extends Folder {
+}
+
+@gmf.node(border.style="dash")
+class Folder extends File {
+	@gmf.compartment
+    val File[*] contents;
+}
+
+class Shortcut extends File {
+    @gmf.link(target.decoration="arrow", style="dash")
+    ref File target;
+}
+
+@gmf.link(label="lastSync",
+	source="source",
+	target="target",
+	style="dot",
+	width="2")
+class Sync {
+    ref File source;
+    ref File target;
+    attr String lastSync;
+}
+
+@gmf.node(label = "name")
+class File {
+    attr String name;
+}

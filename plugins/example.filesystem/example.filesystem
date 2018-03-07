@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<filesystem:Filesystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:filesystem="http://org.eclipse.epsilon.sirius.examples/filesystem">
+  <drives name="C:">
+    <contents xsi:type="filesystem:Folder" name="My Documents">
+      <contents name="photo.jpg"/>
+    </contents>
+    <contents xsi:type="filesystem:Shortcut" name="photo.ink" target="//@drives.0/@contents.0/@contents.0"/>
+  </drives>
+  <drives name="D:">
+    <contents xsi:type="filesystem:Folder" name="Backup"/>
+  </drives>
+  <drives name="H:">
+    <contents xsi:type="filesystem:Folder" name="thing">
+      <contents/>
+    </contents>
+    <contents xsi:type="filesystem:Shortcut" target="//@drives.2/@contents.0/@contents.0"/>
+  </drives>
+  <syncs source="//@drives.1/@contents.0" target="//@drives.0/@contents.0" lastSync="123456"/>
+</filesystem:Filesystem>
