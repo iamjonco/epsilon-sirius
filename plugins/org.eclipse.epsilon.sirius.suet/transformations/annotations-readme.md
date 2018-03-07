@@ -9,7 +9,6 @@ gmf.diagram
 model.extension
     Extension of model files that can be used. Defaults to wildcard * (any file)
     
-!diagram.extension
 !onefile
 !rcp
 !units
